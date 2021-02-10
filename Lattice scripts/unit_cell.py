@@ -3,8 +3,10 @@ import cadquery as cq
 strut_diameeter = 1.0
 unit_cell_size = 10.0
 node_diameter = 2.0
+delta = 0.01 # a small coefficient is needed because CQ thinks that it cuts through emptiness
 
 strut_radius = strut_diameeter / 2.0
+half_unit_cell_size = unit_cell_size / 2.0
 
 unit_cell = (cq.Workplane("front")
           # 1) 4 Z struts
@@ -16,7 +18,7 @@ unit_cell = (cq.Workplane("front")
           .copyWorkplane(
               # create a temporary object with the required workplane
               cq.Workplane("right",
-                           origin=(- unit_cell_size / 2.0, 0, unit_cell_size / 2.0))
+                           origin = (-half_unit_cell_size, 0, half_unit_cell_size))
           )
           .rarray(unit_cell_size, unit_cell_size, 2, 2, True)
           .circle(strut_radius).extrude(unit_cell_size)
@@ -24,11 +26,33 @@ unit_cell = (cq.Workplane("front")
           .copyWorkplane(
               # create a temporary object with the required workplane
               cq.Workplane("top",
-                           origin=(0, - unit_cell_size / 2.0, unit_cell_size / 2.0))
+                           origin = (0, - half_unit_cell_size, half_unit_cell_size))
           )
           .rarray(unit_cell_size, unit_cell_size, 2, 2, True)
           .circle(strut_radius).extrude(unit_cell_size))
 
+
 # Defining the nodes
-#sphere = cq.Workplane("XY").threePointArc((1.0, 1.0), (0.0, 2.0)).close().revolve()
-#nodes = cd
+added_node_diameter = node_diameter + delta
+node_radius = node_diameter / 2.0
+bottom_nodes = (cq.Workplane("XY")
+                .rarray(unit_cell_size, unit_cell_size, 2, 2, True) # bottom plane, 4 nodes
+                .box(added_node_diameter, added_node_diameter, added_node_diameter)
+                .edges("|Z")
+                .fillet(node_radius)
+                .edges("|X")
+                .fillet(node_radius))
+top_nodes = (cq.Workplane("XY",
+                          origin = (0, 0, unit_cell_size))
+             .rarray(unit_cell_size, unit_cell_size, 2, 2, True) # top plane, 4 nodes
+             .box(added_node_diameter, added_node_diameter, added_node_diameter)
+             .edges("|Z")
+             .fillet(node_radius)
+             .edges("|X")
+             .fillet(node_radius))
+
+"""
+sphere = (cq.Workplane("XY")
+          .rarray(unit_cell_size, unit_cell_size, 2, 2, True)
+          .threePointArc((1.0, 1.0), (0.0, 2.0)).close().revolve())
+"""
