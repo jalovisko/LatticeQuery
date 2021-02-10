@@ -4,10 +4,10 @@ strut_diameeter = 1.0
 unit_cell_size = 10.0
 node_diameter = 2.0
 delta = 0.01 # a small coefficient is needed because CQ thinks that it cuts through emptiness
-
 strut_radius = strut_diameeter / 2.0
 half_unit_cell_size = unit_cell_size / 2.0
 
+# Defining the struts
 unit_cell = (cq.Workplane("front")
           # 1) 4 Z struts
           .rarray(unit_cell_size, unit_cell_size, 2, 2, True)
