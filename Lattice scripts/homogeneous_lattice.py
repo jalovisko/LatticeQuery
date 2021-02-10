@@ -1,13 +1,17 @@
 import cadquery as cq
 
-strut_diameeter = 1.0
-unit_cell_size = 10.0
-node_diameter = 2.0
-delta = 0.01 # a small coefficient is needed because CQ thinks that it cuts through emptiness
-strut_radius = strut_diameeter / 2.0
-half_unit_cell_size = unit_cell_size / 2.0
+Ds = 1.0 # strut diameter
+UCsize = 10.0 # unit cell size
+Dn = 2.0 # node diameter
+Nx = 10
+Ny = 10
+Nz = 10
 
-def createUnitCells(self):
+def createUnitCells(self,
+                    strut_diameeter,
+                    unit_cell_size):
+    strut_radius = strut_diameeter / 2.0
+    half_unit_cell_size = unit_cell_size / 2.0
     # Defining the struts
     unit_cell = (cq.Workplane("front")
               # 1) 4 Z struts
@@ -32,29 +36,48 @@ def createUnitCells(self):
               .rarray(unit_cell_size, unit_cell_size, 2, 2, True)
               .circle(strut_radius).extrude(unit_cell_size))
     return self.eachpoint(lambda loc: unit_cell.val().located(loc), True)
-
 cq.Workplane.createUnitCells = createUnitCells
 
-UC = cq.Workplane("XY").pushPoints([(0, 0), (unit_cell_size, 0)]).createUnitCells()
+def createNodes(self,
+                node_diameter,
+                unit_cell_size,
+                delta = 0.01 # a small coefficient is needed because CQ thinks that it cuts through emptiness
+                ):
+    added_node_diameter = node_diameter + delta
+    node_radius = node_diameter / 2.0
+    bottom_nodes = (cq.Workplane("XY")
+                    .rarray(unit_cell_size, unit_cell_size, 2, 2, True) # bottom plane, 4 nodes
+                    .box(added_node_diameter, added_node_diameter, added_node_diameter)
+                    .edges("|Z")
+                    .fillet(node_radius)
+                    .edges("|X")
+                    .fillet(node_radius))
+    return self.eachpoint(lambda loc: bottom_nodes.val().located(loc), True)
+cq.Workplane.createNodes = createNodes
 
-"""
-# Defining the nodes
-added_node_diameter = node_diameter + delta
-node_radius = node_diameter / 2.0
-bottom_nodes = (cq.Workplane("XY")
-                .rarray(unit_cell_size, unit_cell_size, 2, 2, True) # bottom plane, 4 nodes
-                .box(added_node_diameter, added_node_diameter, added_node_diameter)
-                .edges("|Z")
-                .fillet(node_radius)
-                .edges("|X")
-                .fillet(node_radius))
-top_nodes = (cq.Workplane("XY",
-                          origin = (0, 0, unit_cell_size))
-             .rarray(unit_cell_size, unit_cell_size, 2, 2, True) # top plane, 4 nodes
-             .box(added_node_diameter, added_node_diameter, added_node_diameter)
-             .edges("|Z")
-             .fillet(node_radius)
-             .edges("|X")
-             .fillet(node_radius))
+# Generating the positions for each unit cell
+pts = []
+for i in range(Nx):
+    for j in range(Ny):
+        for k in range(Nz):
+            pts.append((i * UCsize, j * UCsize, k * UCsize))
 
-"""
+
+lattice = (cq.Workplane("XY")
+           .pushPoints(pts)
+           .createUnitCells(Ds, UCsize))
+
+# This monstrosity is needed because createNodes creates
+# nodes only at the bottom of each unit cell
+# We simply add an 'empty' unit cell layer on top
+# and put nodes at the bottom of it.
+# Could it be done better? Yes. Too bad.
+k += 1
+for i in range(Nx):
+    for j in range(Ny):
+        pts.append((i * UCsize, j * UCsize, k * UCsize))
+        
+pts.append((i * UCsize, j * UCsize, k * UCsize))
+nodes = (cq.Workplane("XY")
+         .pushPoints(pts)
+         .createNodes(Dn, UCsize))
