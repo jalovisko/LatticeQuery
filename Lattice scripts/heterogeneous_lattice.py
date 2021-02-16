@@ -7,36 +7,40 @@ Nx = 10
 Ny = 10
 Nz = 10
 
-def createUnitCells(self,
-                    strut_diameeter,
-                    unit_cell_size):
-    strut_radius = strut_diameeter / 2.0
+def createUnitCell(self,
+                   strut_diameter,
+                   unit_cell_size):
+    # TODO:
+    # This is not optimal because struts of neoghbouring cells
+    # intersect. Too bad.
+    strut_radius = strut_diameter / 2.0
     half_unit_cell_size = unit_cell_size / 2.0
-    # Defining the struts
+    # The following lines of code weren't particulary easy to write.
+    # They are not going to be easy to read either.
     unit_cell = (cq.Workplane("front")
-              # 1) 4 Z struts
-              .rarray(unit_cell_size, unit_cell_size, 2, 2, True)
-              .circle(strut_radius).extrude(unit_cell_size) # make a cylinder
-              # 2) 4 X struts
-              # We want to make a second cylinder perpendicular to the first,
-              # but we have no face to base the workplane off
-              .copyWorkplane(
-                  # create a temporary object with the required workplane
-                  cq.Workplane("right",
-                               origin = (-half_unit_cell_size, 0, half_unit_cell_size))
-              )
-              .rarray(unit_cell_size, unit_cell_size, 2, 2, True)
-              .circle(strut_radius).extrude(unit_cell_size)
-              # 3) 4 Y struts
-              .copyWorkplane(
-                  # create a temporary object with the required workplane
-                  cq.Workplane("top",
-                               origin = (0, - half_unit_cell_size, half_unit_cell_size))
-              )
-              .rarray(unit_cell_size, unit_cell_size, 2, 2, True)
-              .circle(strut_radius).extrude(unit_cell_size))
-    return self.eachpoint(lambda loc: unit_cell.val().located(loc), True)
-cq.Workplane.createUnitCells = createUnitCells
+                 # (1) 4 Z struts
+                 .rarray(unit_cell_size, unit_cell_size, 2, 2, True)
+                  .circle(strut_radius).extrude(unit_cell_size) # make a cylinder
+                  # (2) 4 X struts
+                  # We want to make a second cylinder perpendicular to the first,
+                  # but we have no face to base the workplane off
+                  .copyWorkplane(
+                      # create a temporary object with the required workplane
+                      cq.Workplane("right",
+                                   origin = (-half_unit_cell_size, 0, half_unit_cell_size))
+                  )
+                  .rarray(unit_cell_size, unit_cell_size, 2, 2, True)
+                  .circle(strut_radius).extrude(unit_cell_size)
+                  # (3) 4 Y struts
+                  .copyWorkplane(
+                      # create a temporary object with the required workplane
+                      cq.Workplane("top",
+                                   origin = (0, - half_unit_cell_size, half_unit_cell_size))
+                  )
+                  .rarray(unit_cell_size, unit_cell_size, 2, 2, True)
+                  .circle(strut_radius).extrude(unit_cell_size))
+    return self.union(self.eachpoint(lambda loc: unit_cell.val().located(loc), True))
+cq.Workplane.createUnitCell = createUnitCell
 
 def createNodes(self,
                 node_diameter,
@@ -55,6 +59,34 @@ def createNodes(self,
     return self.eachpoint(lambda loc: bottom_nodes.val().located(loc), True)
 cq.Workplane.createNodes = createNodes
 
+
+
+
+
+
+min_strut_diameter = 1.0
+max_strut_diameter = 2.0
+unit_cell_size = 10.0
+
+min_strut_radius = min_strut_diameter / 2.0
+max_strut_radius = min_strut_diameter / 2.0
+half_unit_cell_size = unit_cell_size / 2.0
+
+pnts = [(0, 0), (unit_cell_size, 0), (2 * unit_cell_size, 0)]
+diams = [1.0, 2.0, 3.0]
+
+UC = cq.Workplane().tag('base')
+
+for pnt, diam in zip(pnts, diams):
+    UC = UC.workplaneFromTagged('base').center(*pnt).createUnitCell(diam, unit_cell_size)
+
+#pnts = [(0, 0), (100, 0), (200, 0)]
+
+#UC = cq.Workplane().tag('base')
+#for pnt in pnts:
+#    UC = UC.workplaneFromTagged('base').center(*pnt).createUnitCell(Ds, UCsize)
+
+"""
 # Generating the positions for each unit cell
 pts = []
 for i in range(Nx):
@@ -81,3 +113,4 @@ pts.append((i * UCsize, j * UCsize, k * UCsize))
 nodes = (cq.Workplane("XY")
          .pushPoints(pts)
          .createNodes(Dn, UCsize))
+"""

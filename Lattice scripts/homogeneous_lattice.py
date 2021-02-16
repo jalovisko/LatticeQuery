@@ -1,11 +1,15 @@
 import cadquery as cq
 
-Ds = 1.0 # strut diameter
-UCsize = 10.0 # unit cell size
-Dn = 2.0 # node diameter
-Nx = 10
-Ny = 10
-Nz = 10
+# User input begins here
+
+Ds = 1.0       # strut diameter
+UCsize = 10.0  # unit cell size
+Dn = 2.0       # node diameter
+Nx = 10        # N of cells in X direction
+Ny = 10        # N of cells in Y direction
+Nz = 10        # N of cells in Z direction
+
+# User input ends here
 
 def createUnitCells(self,
                     strut_diameeter,

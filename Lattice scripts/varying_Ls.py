@@ -1,9 +1,11 @@
 import cadquery as cq
 from random import random
 
-def createLs(self, diam=10):
-    L = cq.Workplane().circle(diam / 2).extrude(-500)
-    L = L.transformed(offset=cq.Vector(0,0,-500)).transformed(rotate=cq.Vector(90,0,0)).circle(diam / 2).extrude(-500)
+def createLs(self, diam = 10):
+    L = cq.Workplane().circle(diam / 2).extrude(- 500)
+    L = (L.transformed(offset = cq.Vector(0, 0, - 500))
+         .transformed(rotate = cq.Vector(90, 0, 0))
+         .circle(diam / 2.0).extrude(- 500))
 
     return self.union(self.eachpoint(lambda loc: L.val().located(loc), True))
 
