@@ -5,10 +5,9 @@ import numpy as np
 min_strut_diameter = 1.0
 max_strut_diameter = 2.0
 unit_cell_size = 10.0
-N = 11
-Nx = 11
-Ny = 11
-Nz = 11
+Nx = 3 # N of cells in X direction
+Ny = 3 # N of cells in Y direction
+Nz = 3 # N of cells in Z direction
 
 Dn = 2.0 # node diameter
 
@@ -17,7 +16,7 @@ def createUnitCell(self,
                    unit_cell_size):
     # TODO:
     # This is not optimal because struts of neoghbouring cells
-    # intersect. Too bad.
+    # intersect and up to 50% more resources are used. Too bad.
     strut_radius = strut_diameter / 2.0
     half_unit_cell_size = unit_cell_size / 2.0
     # The following lines of code weren't particulary easy to write.
@@ -64,12 +63,23 @@ def createNodes(self,
     return self.eachpoint(lambda loc: bottom_nodes.val().located(loc), True)
 cq.Workplane.createNodes = createNodes
 
-diams = np.linspace(min_strut_diameter, max_strut_diameter, N)
-pnts = [(i * unit_cell_size, 0) for i in range(N)]
+diams = np.linspace(min_strut_diameter, max_strut_diameter, Nx)
+pnts = [(i * unit_cell_size, 0) for i in range(Nx)]
 
 UC = cq.Workplane().tag('base')
 for pnt, diam in zip(pnts, diams):
-    UC = UC.workplaneFromTagged('base').center(*pnt).createUnitCell(diam, unit_cell_size)
+    # Generating the positions for each homogeneous layer
+    layer_pnts = []
+    for i in range(Ny):
+        for j in range(Nz):
+            layer_pnts.append((0, i * unit_cell_size, j *unit_cell_size))
+    UC = (UC
+          .workplaneFromTagged('base')
+          .center(*pnt)
+          .pushPoints(layer_pnts)
+          .createUnitCell(diam, unit_cell_size))
+
+
 
 #pnts = [(0, 0), (100, 0), (200, 0)]
 
@@ -94,7 +104,7 @@ lattice = (cq.Workplane("XY")
 # nodes only at the bottom of each unit cell
 # We simply add an 'empty' unit cell layer on top
 # and put nodes at the bottom of it.
-# Could it be done better? Yes. Too bad.
+# Could it be done better? Yes.
 k += 1
 for i in range(Nx):
     for j in range(Ny):
