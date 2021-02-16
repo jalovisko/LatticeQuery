@@ -1,11 +1,16 @@
 import cadquery as cq
+import numpy as np
 
-Ds = 1.0 # strut diameter
-UCsize = 10.0 # unit cell size
+
+min_strut_diameter = 1.0
+max_strut_diameter = 2.0
+unit_cell_size = 10.0
+N = 11
+Nx = 11
+Ny = 11
+Nz = 11
+
 Dn = 2.0 # node diameter
-Nx = 10
-Ny = 10
-Nz = 10
 
 def createUnitCell(self,
                    strut_diameter,
@@ -59,24 +64,10 @@ def createNodes(self,
     return self.eachpoint(lambda loc: bottom_nodes.val().located(loc), True)
 cq.Workplane.createNodes = createNodes
 
-
-
-
-
-
-min_strut_diameter = 1.0
-max_strut_diameter = 2.0
-unit_cell_size = 10.0
-
-min_strut_radius = min_strut_diameter / 2.0
-max_strut_radius = min_strut_diameter / 2.0
-half_unit_cell_size = unit_cell_size / 2.0
-
-pnts = [(0, 0), (unit_cell_size, 0), (2 * unit_cell_size, 0)]
-diams = [1.0, 2.0, 3.0]
+diams = np.linspace(min_strut_diameter, max_strut_diameter, N)
+pnts = [(i * unit_cell_size, 0) for i in range(N)]
 
 UC = cq.Workplane().tag('base')
-
 for pnt, diam in zip(pnts, diams):
     UC = UC.workplaneFromTagged('base').center(*pnt).createUnitCell(diam, unit_cell_size)
 
