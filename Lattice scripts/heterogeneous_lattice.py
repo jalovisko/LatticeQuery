@@ -1,15 +1,14 @@
 import cadquery as cq
 import numpy as np
 
-
 min_strut_diameter = 1.0
-max_strut_diameter = 2.0
+max_strut_diameter = 3.0
 unit_cell_size = 10.0
-Nx = 3 # N of cells in X direction
+Nx = 5 # N of cells in X direction
 Ny = 3 # N of cells in Y direction
-Nz = 3 # N of cells in Z direction
+Nz = 4 # N of cells in Z direction
 
-Dn = 2.0 # node diameter
+Dn = 4.0 # node diameter
 
 def createUnitCell(self,
                    strut_diameter,
@@ -79,26 +78,14 @@ for pnt, diam in zip(pnts, diams):
           .pushPoints(layer_pnts)
           .createUnitCell(diam, unit_cell_size))
 
-
-
-#pnts = [(0, 0), (100, 0), (200, 0)]
-
-#UC = cq.Workplane().tag('base')
-#for pnt in pnts:
-#    UC = UC.workplaneFromTagged('base').center(*pnt).createUnitCell(Ds, UCsize)
-
-"""
 # Generating the positions for each unit cell
 pts = []
 for i in range(Nx):
     for j in range(Ny):
         for k in range(Nz):
-            pts.append((i * UCsize, j * UCsize, k * UCsize))
-
-
-lattice = (cq.Workplane("XY")
-           .pushPoints(pts)
-           .createUnitCells(Ds, UCsize))
+            pts.append((i * unit_cell_size,
+                        j * unit_cell_size,
+                        k * unit_cell_size))
 
 # This monstrosity is needed because createNodes creates
 # nodes only at the bottom of each unit cell
@@ -108,10 +95,12 @@ lattice = (cq.Workplane("XY")
 k += 1
 for i in range(Nx):
     for j in range(Ny):
-        pts.append((i * UCsize, j * UCsize, k * UCsize))
-        
-pts.append((i * UCsize, j * UCsize, k * UCsize))
+        pts.append((i * unit_cell_size,
+                    j * unit_cell_size,
+                    k * unit_cell_size))
+pts.append((i * unit_cell_size,
+            j * unit_cell_size,
+            k * unit_cell_size))
 nodes = (cq.Workplane("XY")
          .pushPoints(pts)
-         .createNodes(Dn, UCsize))
-"""
+         .createNodes(Dn, unit_cell_size))
