@@ -5,12 +5,11 @@ min_strut_diameter = 1.0
 max_strut_diameter = 3.0
 unit_cell_size = 10.0
 Nx = 5 # N of cells in X direction
-Ny = 3 # N of cells in Y direction
-Nz = 4 # N of cells in Z direction
+Ny = 4 # N of cells in Y direction
+Nz = 3 # N of cells in Z direction
 
 min_Dn = 2.0
 max_Dn = 4.0
-Dn = 4.0 # node diameter
 
 # Makes a unit cells of 12 struts (edges)
 def createUnitCell(self,
@@ -71,7 +70,7 @@ strut_diams = np.linspace(min_strut_diameter, max_strut_diameter, Nx)
 node_diams = np.linspace(min_Dn, max_Dn, Nx)
 
 UC = cq.Workplane().tag('base')
-nodes = cq.Workplane().tag('base')Dn
+nodes = cq.Workplane().tag('base')
 for pnt, strut_diam, node_diam in zip(UC_pnts, strut_diams, node_diams):
     # Generating the positions for each homogeneous layer
     layer_pnts = []
