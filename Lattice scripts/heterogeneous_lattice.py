@@ -8,8 +8,11 @@ Nx = 5 # N of cells in X direction
 Ny = 3 # N of cells in Y direction
 Nz = 4 # N of cells in Z direction
 
+min_Dn = 2.0
+max_Dn = 4.0
 Dn = 4.0 # node diameter
 
+# Makes a unit cells of 12 struts (edges)
 def createUnitCell(self,
                    strut_diameter,
                    unit_cell_size):
@@ -45,6 +48,7 @@ def createUnitCell(self,
     return self.union(self.eachpoint(lambda loc: unit_cell.val().located(loc), True))
 cq.Workplane.createUnitCell = createUnitCell
 
+# Creates 4 nodes at the XY plane of each unit cell
 def createNodes(self,
                 node_diameter,
                 unit_cell_size,
@@ -59,25 +63,37 @@ def createNodes(self,
                     .fillet(node_radius)
                     .edges("|X")
                     .fillet(node_radius))
-    return self.eachpoint(lambda loc: bottom_nodes.val().located(loc), True)
+    return self.union(self.eachpoint(lambda loc: bottom_nodes.val().located(loc), True))
 cq.Workplane.createNodes = createNodes
 
-diams = np.linspace(min_strut_diameter, max_strut_diameter, Nx)
-pnts = [(i * unit_cell_size, 0) for i in range(Nx)]
+UC_pnts = [(i * unit_cell_size, 0) for i in range(Nx)]
+strut_diams = np.linspace(min_strut_diameter, max_strut_diameter, Nx)
+node_diams = np.linspace(min_Dn, max_Dn, Nx)
 
 UC = cq.Workplane().tag('base')
-for pnt, diam in zip(pnts, diams):
+nodes = cq.Workplane().tag('base')Dn
+for pnt, strut_diam, node_diam in zip(UC_pnts, strut_diams, node_diams):
     # Generating the positions for each homogeneous layer
     layer_pnts = []
+    nodes_pnts = []
     for i in range(Ny):
         for j in range(Nz):
             layer_pnts.append((0, i * unit_cell_size, j *unit_cell_size))
+    for i in range(Ny):
+        for j in range(Nz + 1):
+            nodes_pnts.append((0, i * unit_cell_size, j *unit_cell_size))
     UC = (UC
           .workplaneFromTagged('base')
           .center(*pnt)
           .pushPoints(layer_pnts)
-          .createUnitCell(diam, unit_cell_size))
+          .createUnitCell(strut_diam, unit_cell_size))
+    nodes = (nodes
+            .workplaneFromTagged('base')
+            .center(*pnt)
+            .pushPoints(nodes_pnts)
+            .createNodes(node_diam, unit_cell_size))
 
+"""
 # Generating the positions for each unit cell
 pts = []
 for i in range(Nx):
@@ -104,3 +120,4 @@ pts.append((i * unit_cell_size,
 nodes = (cq.Workplane("XY")
          .pushPoints(pts)
          .createNodes(Dn, unit_cell_size))
+"""
