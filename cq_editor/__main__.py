@@ -3,7 +3,7 @@ import argparse
 
 from PyQt5.QtWidgets import QApplication
 
-NAME = 'CQ-editor'
+NAME = 'FBLGen'
 
 #need to initialize QApp here, otherewise svg icons do not work on windows
 app = QApplication(sys.argv,
