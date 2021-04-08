@@ -1,6 +1,3 @@
-# This is adapted from here:
-# https://github.com/CadQuery/cadquery/issues/628#issuecomment-807493984
-
 def eachpointAdaptive(
     self,
     callback,
@@ -16,6 +13,9 @@ def eachpointAdaptive(
     on the original stack. Vertices and points remain a point. Faces, Wires, Solids, Edges, and 
     Shells are converted to a point by using their center of mass. If the stack has zero length, a 
     single point is returned, which is the center of the current workplane / coordinate system.
+    
+    This is adapted from here:
+    https://github.com/CadQuery/cadquery/issues/628#issuecomment-807493984
 
     :param callback_extra_args: Array of dicts for keyword arguments that will be 
         provided to the callback in addition to the obligatory location argument. The outer array 
