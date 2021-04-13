@@ -231,7 +231,7 @@ def createNodes(node_diameter,
 cq.Workplane.createNodes = createNodes
 
 def unit_cell(unit_cell_size, strut_radius):
-    result = cq.Workplane("XY").transformed(offset = location)
+    result = cq.Workplane("XY")
     result = (result
               .union(BCC_diagonals(unit_cell_size, strut_radius))
               .union(BCC_vertical_struts(unit_cell_size, strut_radius))
@@ -255,4 +255,5 @@ def BCC_lattice(unit_cell_size, strut_radius, Nx, Ny, Nz):
 # Register our custom plugin before use.
 cq.Workplane.BCC_lattice = BCC_lattice
 
-result = BCC_lattice(unit_cell_size, strut_radius, Nx, Ny, Nz)
+result = unit_cell(unit_cell_size, strut_radius)
+#result = BCC_lattice(unit_cell_size, strut_radius, Nx, Ny, Nz)
