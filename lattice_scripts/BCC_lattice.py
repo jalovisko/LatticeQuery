@@ -2,12 +2,16 @@ import numpy as np
 from topologies.fblgen_helper import eachpointAdaptive
 from topologies.BCC import unit_cell
 
+# USER INPUT
+
 unit_cell_size = 10
 strut_diameter = 1
 node_diameter = 2
 Nx = 2
-Ny = 3
+Ny = 2
 Nz = 2
+
+# END USER INPUT
 
 strut_radius = strut_diameter / 2.0
 
