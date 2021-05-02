@@ -1,4 +1,5 @@
 from parfunlib.topologies.BCC import BCC_heterogeneous_lattice
+
 # USER INPUT
 
 unit_cell_size = 10
@@ -6,9 +7,9 @@ min_strut_diameter = 1
 max_strut_diameter = 3
 min_node_diameter = 1.1
 max_node_diameter = 3.3
-Nx = 3
-Ny = 4
-Nz = 5
+Nx = 2
+Ny = 2
+Nz = 2
 
 # END USER INPUT
 
