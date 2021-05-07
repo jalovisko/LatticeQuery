@@ -12,6 +12,7 @@ Nz = 3
 
 # END USER INPUT
 
+
 # Gyroïd, all edges are splines on different workplanes.
 def createGyroid(self, thickness, unit_cell_size):
     half_unit_cell_size = unit_cell_size / 2.0
@@ -57,28 +58,8 @@ def createGyroid(self, thickness, unit_cell_size):
     return self.union(self.eachpoint(lambda loc: plate_4.val().located(loc), True))
 cq.Workplane.createGyroid = createGyroid
 
-pnts = [(0, 0)]
+pnts = [tuple(unit_cell_size / 2 for i in range(3))]
 gyroid = (cq.Workplane("XY")
           .pushPoints(pnts)
           .createGyroid(thickness, unit_cell_size))
 
-"""
-UC_pnts = [(i * unit_cell_size, 0) for i in range(Nx)]
-UC = cq.Workplane().tag('base')
-for pnt in UC_pnts:
-    # Generating the positions for each homogeneous layer
-    layer_pnts = []
-    nodes_pnts = []
-    for i in range(Ny):
-        for j in range(Nz):
-            layer_pnts.append((0, i * unit_cell_size, j *unit_cell_size))
-    for i in range(Ny):
-        for j in range(Nz + 1):
-            nodes_pnts.append((0, i * unit_cell_size, j *unit_cell_size))
-    UC = (UC
-          .workplaneFromTagged('base')
-          .center(*pnt)
-          .pushPoints(layer_pnts)
-          .createGyroid(thickness, unit_cell_size))
-
-"""
