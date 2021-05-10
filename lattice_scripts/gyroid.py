@@ -61,22 +61,30 @@ cq.Workplane.gyroid_000 = gyroid_000
 
 def gyroid_unit_cell(thickness, unit_cell_size):
     half_unit_cell_size = unit_cell_size / 2.0
+    # Octante 000
     pnts = [tuple(unit_cell_size / 2 for i in range(3))]
     g_000 = (cq.Workplane("XY").pushPoints(pnts)
              .gyroid_000(thickness, unit_cell_size))
     result = g_000
+    # Octante 100
     mirZY_pos = g_000.mirror(mirrorPlane = "ZY",
                               basePointVector = (unit_cell_size, 0, 0))
     g_100 = mirZY_pos.mirror(mirrorPlane = "XZ",
                              basePointVector = (0, half_unit_cell_size, 0))
     result = result.union(g_100)
+    # Octante 110
     g_000_inverse = (cq.Workplane("XY").pushPoints(pnts)
                      .gyroid_000(- thickness, unit_cell_size))
     mirXZ_pos = g_000_inverse.mirror(mirrorPlane = "XZ",
-                                 basePointVector = (0, unit_cell_size, 0))
+                                     basePointVector = (0, unit_cell_size, 0))
     g_110 = mirXZ_pos.translate((unit_cell_size, 0, 0))
     result = result.union(g_110)
-    
+    # Octante 010
+    mirYZ_neg = g_110.mirror(mirrorPlane = "YZ",
+                             basePointVector = (unit_cell_size, 0, 0))
+    g_010 = mirYZ_neg.mirror(mirrorPlane = "XZ",
+                             basePointVector = (0, 1.5 * unit_cell_size, 0))
+    result = result.union(g_010)
     return result
 
 gyroid = gyroid_unit_cell(thickness, unit_cell_size)
