@@ -70,6 +70,13 @@ def gyroid_unit_cell(thickness, unit_cell_size):
     g_100 = mirZY_pos.mirror(mirrorPlane = "XZ",
                              basePointVector = (0, half_unit_cell_size, 0))
     result = result.union(g_100)
+    g_000_inverse = (cq.Workplane("XY").pushPoints(pnts)
+                     .gyroid_000(- thickness, unit_cell_size))
+    mirXZ_pos = g_000_inverse.mirror(mirrorPlane = "XZ",
+                                 basePointVector = (0, unit_cell_size, 0))
+    g_110 = mirXZ_pos.translate((unit_cell_size, 0, 0))
+    result = result.union(g_110)
+    
     return result
 
 gyroid = gyroid_unit_cell(thickness, unit_cell_size)
