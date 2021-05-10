@@ -14,7 +14,7 @@ Nz = 3
 
 
 # Gyroïd, all edges are splines on different workplanes.
-def gyroid_OCT(self, thickness, unit_cell_size):
+def gyroid_000(self, thickness, unit_cell_size):
     half_unit_cell_size = unit_cell_size / 2.0
     quarter_unit_cell_size = unit_cell_size / 4.0
     edge_points = [
@@ -54,20 +54,22 @@ def gyroid_OCT(self, thickness, unit_cell_size):
             .spline(edge_points[i + 1])
         )
     surface_points = [[0, 0, 0]]
-    plate_4 = (cq.Workplane("XY").interpPlate(edge_wire, surface_points, thickness))
+    plate_4 = cq.Workplane("XY")
+    plate_4 = plate_4.interpPlate(edge_wire, surface_points, thickness)
     return self.union(self.eachpoint(lambda loc: plate_4.val().located(loc), True))
-cq.Workplane.gyroid_OCT = gyroid_OCT
-
+cq.Workplane.gyroid_000 = gyroid_000
 
 def gyroid_unit_cell(thickness, unit_cell_size):
+    half_unit_cell_size = unit_cell_size / 2.0
     pnts = [tuple(unit_cell_size / 2 for i in range(3))]
-    result = (cq.Workplane("XY")
-              .pushPoints(pnts)
-              .gyroid_OCT(thickness, unit_cell_size))
-    mirZY_pos = result.mirror(mirrorPlane="ZY",basePointVector = (unit_cell_size, 0, 0))
-    mirXZ_pos_moved = mirZY_pos.mirror(mirrorPlane="XZ",basePointVector=(0, unit_cell_size, 0))
-    
-    result = result.union(mirXZ_pos)
+    g_000 = (cq.Workplane("XY").pushPoints(pnts)
+             .gyroid_000(thickness, unit_cell_size))
+    result = g_000
+    mirZY_pos = g_000.mirror(mirrorPlane = "ZY",
+                              basePointVector = (unit_cell_size, 0, 0))
+    g_100 = mirZY_pos.mirror(mirrorPlane = "XZ",
+                             basePointVector = (0, half_unit_cell_size, 0))
+    result = result.union(g_100)
     return result
 
 gyroid = gyroid_unit_cell(thickness, unit_cell_size)
