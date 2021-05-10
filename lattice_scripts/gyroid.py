@@ -59,7 +59,10 @@ def gyroid_000(self, thickness, unit_cell_size):
     return self.union(self.eachpoint(lambda loc: plate_4.val().located(loc), True))
 cq.Workplane.gyroid_000 = gyroid_000
 
-def gyroid_unit_cell(thickness, unit_cell_size):
+def gyroid_unit_cell(thickness,
+                     unit_cell_size,
+                     delta = 1e-5 # a small tolerance (1e-10 too small)
+                     ):
     half_unit_cell_size = unit_cell_size / 2.0
     # Octante 000
     pnts = [tuple(unit_cell_size / 2 for i in range(3))]
@@ -85,6 +88,26 @@ def gyroid_unit_cell(thickness, unit_cell_size):
     g_010 = mirYZ_neg.mirror(mirrorPlane = "XZ",
                              basePointVector = (0, 1.5 * unit_cell_size, 0))
     result = result.union(g_010)
+    # Octante 001
+    g_001 = g_110.translate((-unit_cell_size,
+                             -unit_cell_size,
+                             unit_cell_size))
+    result = result.union(g_001)
+    # Octante 101
+    g_101 = g_010.translate((unit_cell_size,
+                             -unit_cell_size,
+                             unit_cell_size))
+    result = result.union(g_101)
+    # Octante 011
+    g_011 = g_100.translate((- (1 + delta) * unit_cell_size,
+                             (1 + delta) * unit_cell_size,
+                             (1 + delta) * unit_cell_size))
+    result = result.union(g_011)
+    # Octante 111
+    g_111 = g_000.translate(((1 + delta) * unit_cell_size,
+                            (1 + delta) * unit_cell_size,
+                            (1 + delta) * unit_cell_size))
+    result = result.union(g_111)
     return result
 
 gyroid = gyroid_unit_cell(thickness, unit_cell_size)
