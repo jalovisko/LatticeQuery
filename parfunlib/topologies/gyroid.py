@@ -54,10 +54,9 @@ def gyroid_000(self, thickness, unit_cell_size):
 
 cq.Workplane.gyroid_000 = gyroid_000
 
-def gyroid_unit_cell(thickness,
-                     unit_cell_size,
-                     delta = 1e-8 # a small tolerance (1e-10 too small)
-                     ):
+def unit_cell(location, thickness, unit_cell_size,
+				delta = 1e-8 # a small tolerance (1e-10 is too small)
+				):
     half_unit_cell_size = unit_cell_size / 2.0
     # Octante 000
     pnts = [tuple(unit_cell_size / 2 for i in range(3))]
@@ -103,7 +102,8 @@ def gyroid_unit_cell(thickness,
                             (1 + delta) * unit_cell_size,
                             (1 + delta) * unit_cell_size))
     result = result.union(g_111)
-    return result
+    return result.val().located(location)
+cq.Workplane.unit_cell = unit_cell
 
 
 def gyroid_homogeneous_lattice(unit_cell_size,
@@ -122,8 +122,7 @@ def gyroid_homogeneous_lattice(unit_cell_size,
 			unit_cell_params.append(
 				{"thickness": thickness,
 				"unit_cell_size": unit_cell_size})
-	result = result.eachpointAdaptive(gyroid_unit_cell,
+	result = result.eachpointAdaptive(unit_cell,
 									  callback_extra_args = unit_cell_params,
 									  useLocalCoords = True)
-	#result = result.unit_cell(unit_cell_size, strut_radius, node_diameter)
 	return result

@@ -1,7 +1,7 @@
 # Python
 import cadquery as cq
 
-from parfunlib.topologies.gyroid import gyroid_unit_cell
+from parfunlib.topologies.gyroid import gyroid_homogeneous_lattice
 
 # BEGIN USER INPUT
 
@@ -13,5 +13,7 @@ Nz = 3
 
 # END USER INPUT
 
-gyroid = gyroid_unit_cell(thickness, unit_cell_size)
+gyroid = gyroid_homogeneous_lattice(thickness,
+                                    unit_cell_size,
+                                    Nx, Ny, Nz)
 
