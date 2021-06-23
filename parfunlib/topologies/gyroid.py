@@ -128,3 +128,28 @@ def gyroid_homogeneous_lattice(unit_cell_size,
 									  callback_extra_args = unit_cell_params,
 									  useLocalCoords = True)
     return result
+
+def gyroid_heterogeneous_lattice(unit_cell_size,
+                                min_thickness,
+                                max_thickness,
+                                Nx, Ny, Nz):
+    # Register the custrom plugin 
+    cq.Workplane.eachpointAdaptive = eachpointAdaptive
+    thicknesses = np.linspace(min_thickness, max_thickness, Nz)
+    UC_pnts = []
+    for i in range(Nx):
+        for j in range(Ny):
+            for k in range(Nz):
+                UC_pnts.append((2 * i * unit_cell_size, 2 * j * unit_cell_size, 2 * k * unit_cell_size))
+    result = cq.Workplane().tag('base')
+    result = result.pushPoints(UC_pnts)
+    unit_cell_params = []
+    for i in range(Nx * Ny):
+        for j in range(Nz):
+            unit_cell_params.append({"thickness": thicknesses[j],
+                "unit_cell_size": unit_cell_size})
+    result = result.eachpointAdaptive(unit_cell,
+									  callback_extra_args = unit_cell_params,
+									  useLocalCoords = True)
+    return result
+
