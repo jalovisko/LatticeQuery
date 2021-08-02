@@ -9,7 +9,7 @@ min_node_diameter = 1.1
 max_node_diameter = 3.3
 Nx = 2
 Ny = 2
-Nz = 2
+Nz = 10
 
 # END USER INPUT
 
@@ -22,4 +22,5 @@ result = BCC_heterogeneous_lattice(unit_cell_size,
                                     max_strut_diameter,
                                     min_node_diameter,
                                     max_node_diameter,
-                                    Nx, Ny, Nz)
+                                    Nx, Ny, Nz,
+                                    rule = 'sin')

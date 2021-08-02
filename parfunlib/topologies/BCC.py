@@ -199,15 +199,23 @@ def BCC_heterogeneous_lattice(unit_cell_size,
 							  max_strut_diameter,
 							  min_node_diameter,
 							  max_node_diameter,
-							  Nx, Ny, Nz):
+							  Nx, Ny, Nz,
+							  rule = 'linear'):
 	min_strut_radius = min_strut_diameter / 2.0
 	max_strut_radius = max_strut_diameter / 2.0
-	strut_radii = np.linspace(min_strut_radius,
-							  max_strut_radius,
-							  Nz)
-	node_diameters = np.linspace(min_node_diameter,
-								 max_node_diameter,
-								 Nz)
+	if rule == 'linear':
+		strut_radii = np.linspace(min_strut_radius,
+	   		 					  max_strut_radius,
+		    					  Nz)
+		node_diameters = np.linspace(min_node_diameter,
+	    							 max_node_diameter,
+		    						 Nz)
+	if rule == 'sin':
+		average = lambda num1, num2: (num1 + num2) / 2
+		strut_radii = np.sin(np.linspace(min_strut_radius, max_strut_radius, Nz)*12) + 2*average(min_strut_radius, max_strut_radius)
+		print(strut_radii)
+		node_diameters = np.sin(np.linspace(min_node_diameter, max_node_diameter, Nz)*12) + 2*average(min_node_diameter, max_node_diameter)
+		print(node_diameters)
 	UC_pnts = []
 	for i in range(Nx):
 		for j in range(Ny):
