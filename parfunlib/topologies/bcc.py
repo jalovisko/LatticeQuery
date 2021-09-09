@@ -1,3 +1,17 @@
+##############################################################################
+# Copyright (C) 2021, Advanced Design and Manufacturing Lab (ADML). 
+# All rights reserved. 
+#
+# This software and its documentation and related materials are owned by 
+# ADML. The software may only be incorporated into application programs owned
+# by members of ADML. The structure and organization of this software are
+# the valuable trade secrets of ADML and its suppliers. The software is also 
+# protected by copyright law and international treaty provisions.
+#
+# By use of this software, its documentation or related materials, you 
+# acknowledge and accept the above terms.
+##############################################################################
+
 from ..commons import eachpointAdaptive
 
 from math import hypot, acos, degrees
@@ -8,8 +22,34 @@ import cadquery as cq
 # Register our custom plugins before use.
 cq.Workplane.eachpointAdaptive = eachpointAdaptive
 
-# The angle is chosen with respect to the positive X direction
-def create_diagonal_strut(location, unit_cell_size, radius, angle_x, angle_y):
+def create_diagonal_strut(
+		location: cq.occ_impl.geom.Location,
+		unit_cell_size: np.float64,
+		radius: np.float64,
+		angle_x: np.float64,
+		angle_y: np.float64) -> cq.occ_impl.shapes.Compound:
+	"""
+	Creates a solid model of a diagonal cylindrical strut of the BCC 
+	unit cell. The angle is chosen with respect to the positive X direction
+
+	Parameters
+    ----------
+        location : cq.occ_impl.geom.Location
+            point location of the strut
+        unit_cell_size : np.float64
+            unit cell size (in mm)
+		angle_x : np.float64
+			angle between the stut and the positibe direction of X
+			in the local coordinate system
+		angle_y : np.float64
+			angle between the stut and the positibe direction of Y
+			in the local coordinate system
+	Returns
+	-------
+		cq.occ_impl.shapes.Compound
+			a solid model of the strut
+		
+	"""
 	hypot2D = hypot(unit_cell_size, unit_cell_size)
 	hypot3D = hypot(hypot2D, unit_cell_size)
 	result = (
@@ -20,7 +60,7 @@ def create_diagonal_strut(location, unit_cell_size, radius, angle_x, angle_y):
 	)
 	return result.val().located(location)
 
-def BCC_diagonals(unit_cell_size, strut_radius):
+def bcc_diagonals(unit_cell_size, strut_radius):
 	# In a cube ABCDA1B1C1D1 this is the angle C1AD
 	angle_C1AD = 90 - degrees(acos(3**-.5))
 	corner_points = unit_cell_size * np.array(
@@ -57,9 +97,9 @@ def BCC_diagonals(unit_cell_size, strut_radius):
 	)
 	return result
 # Register our custom plugin before use.
-cq.Workplane.BCC_diagonals = BCC_diagonals
+cq.Workplane.bcc_diagonals = bcc_diagonals
 
-def BCC_vertical_struts(unit_cell_size, strut_radius):
+def bcc_vertical_struts(unit_cell_size, strut_radius):
 	result = cq.Workplane("XY")
 	corner_points = unit_cell_size * np.array(
 		[(0, 0),
@@ -78,9 +118,9 @@ def BCC_vertical_struts(unit_cell_size, strut_radius):
 				  )
 	return result
 # Register our custom plugin before use.
-cq.Workplane.BCC_vertical_struts = BCC_vertical_struts
+cq.Workplane.bcc_vertical_struts = bcc_vertical_struts
 
-def BCC_bottom_horizontal_struts(unit_cell_size, strut_radius):
+def bcc_bottom_horizontal_struts(unit_cell_size, strut_radius):
 	result = cq.Workplane("XY")
 	angle = 90
 	corner_points = unit_cell_size * np.array(
@@ -102,9 +142,9 @@ def BCC_bottom_horizontal_struts(unit_cell_size, strut_radius):
 		angle += 90
 	return result
 # Register our custom plugin before use.
-cq.Workplane.BCC_bottom_horizontal_struts = BCC_bottom_horizontal_struts
+cq.Workplane.bcc_bottom_horizontal_struts = bcc_bottom_horizontal_struts
 
-def BCC_top_horizontal_struts(unit_cell_size, strut_radius):
+def bcc_top_horizontal_struts(unit_cell_size, strut_radius):
 	result = cq.Workplane("XY")
 	angle = 90
 	corner_points = unit_cell_size * np.array(
@@ -126,7 +166,7 @@ def BCC_top_horizontal_struts(unit_cell_size, strut_radius):
 		angle += 90
 	return result
 # Register our custom plugin before use.
-cq.Workplane.BCC_top_horizontal_struts = BCC_top_horizontal_struts
+cq.Workplane.bcc_top_horizontal_struts = bcc_top_horizontal_struts
 
 # Creates 4 nodes at the XY plane of each unit cell
 def createNodes(node_diameter,
@@ -185,16 +225,16 @@ cq.Workplane.createNodes = createNodes
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter):
 	result = cq.Workplane("XY")
 	result = (result
-			  .union(BCC_diagonals(unit_cell_size, strut_radius))
-			  .union(BCC_vertical_struts(unit_cell_size, strut_radius))
-			  .union(BCC_bottom_horizontal_struts(unit_cell_size, strut_radius))
-			  .union(BCC_top_horizontal_struts(unit_cell_size, strut_radius))
+			  .union(bcc_diagonals(unit_cell_size, strut_radius))
+			  .union(bcc_vertical_struts(unit_cell_size, strut_radius))
+			  .union(bcc_bottom_horizontal_struts(unit_cell_size, strut_radius))
+			  .union(bcc_top_horizontal_struts(unit_cell_size, strut_radius))
 			  .union(createNodes(node_diameter, unit_cell_size))
 			  )
 	return result.val().located(location)
 cq.Workplane.unit_cell = unit_cell
 
-def BCC_heterogeneous_lattice(unit_cell_size,
+def bcc_heterogeneous_lattice(unit_cell_size,
 							  min_strut_diameter,
 							  max_strut_diameter,
 							  min_node_diameter,
@@ -212,8 +252,10 @@ def BCC_heterogeneous_lattice(unit_cell_size,
 		    						 Nz)
 	if rule == 'sin':
 		average = lambda num1, num2: (num1 + num2) / 2
-		strut_radii = np.sin(np.linspace(min_strut_radius, max_strut_radius, Nz)*12) + 2*average(min_strut_radius, max_strut_radius)
-		node_diameters = np.sin(np.linspace(min_node_diameter, max_node_diameter, Nz)*12) + 2*average(min_node_diameter, max_node_diameter)
+		strut_radii = np.sin(
+			np.linspace(min_strut_radius, max_strut_radius, Nz)*12) + 2*average(min_strut_radius, max_strut_radius)
+		node_diameters = np.sin(
+			np.linspace(min_node_diameter, max_node_diameter, Nz)*12) + 2*average(min_node_diameter, max_node_diameter)
 	UC_pnts = []
 	for i in range(Nx):
 		for j in range(Ny):
