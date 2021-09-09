@@ -29,8 +29,8 @@ def create_diagonal_strut(
 		angle_x: np.float64,
 		angle_y: np.float64) -> cq.occ_impl.shapes.Compound:
 	"""
-	Creates a solid model of a diagonal cylindrical strut of the BCC 
-	unit cell. The angle is chosen with respect to the positive X direction
+	Creates a solid model of a diagonal cylindrical strut.
+	The angle is chosen with respect to the positive X direction
 
 	Parameters
     ----------
@@ -60,7 +60,26 @@ def create_diagonal_strut(
 	)
 	return result.val().located(location)
 
-def bcc_diagonals(unit_cell_size, strut_radius):
+def bcc_diagonals(
+		unit_cell_size: np.float64,
+		strut_radius: np.float64) -> cq.cq.Workplane:
+	"""
+	Creates a solid model of the diagonals in a BCC unit cell.
+
+	Parameters
+    ----------
+        location : cq.occ_impl.geom.Location
+            point location of the strut
+        unit_cell_size : np.float64
+            unit cell size (in mm)
+		strut_radius: np.float64
+			strut radius (in mm)
+	Returns
+	-------
+		cq.occ_impl.shapes.Compound
+			a solid model of the strut
+		
+	"""
 	# In a cube ABCDA1B1C1D1 this is the angle C1AD
 	angle_C1AD = 90 - degrees(acos(3**-.5))
 	corner_points = unit_cell_size * np.array(
