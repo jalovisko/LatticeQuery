@@ -64,7 +64,7 @@ def fcc_diagonals(
 		unit_cell_size: np.float64,
 		strut_radius: np.float64) -> cq.cq.Workplane:
 	"""
-	Creates a solid model of the diagonals in a BCC unit cell.
+	Creates a solid model of the diagonals in a FCC unit cell.
 
 	Parameters
     ----------
@@ -97,19 +97,19 @@ def fcc_diagonals(
 				{"unit_cell_size": unit_cell_size,
 				"radius": strut_radius,
 				 "angle_x": - 45,
-				 "angle_y": angle_ABA1},
+				 "angle_y": 0},
 				{"unit_cell_size": unit_cell_size,
 				"radius": strut_radius,
 				 "angle_x": - 45,
-				 "angle_y": - angle_ABA1},
+				 "angle_y": - 0},
 				{"unit_cell_size": unit_cell_size,
 				"radius": strut_radius,
 				 "angle_x": 45,
-				 "angle_y": - angle_ABA1},
+				 "angle_y": - 0},
 				{"unit_cell_size": unit_cell_size,
 				"radius": strut_radius,
 				 "angle_x": 45,
-				 "angle_y": angle_ABA1}
+				 "angle_y": 0}
 				],
 			useLocalCoords = True
 		)
@@ -244,7 +244,7 @@ cq.Workplane.createNodes = createNodes
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter):
 	result = cq.Workplane("XY")
 	result = (result
-			  #.union(fcc_diagonals(unit_cell_size, strut_radius))
+			  .union(fcc_diagonals(unit_cell_size, strut_radius))
 			  .union(fcc_vertical_struts(unit_cell_size, strut_radius))
 			  .union(fcc_bottom_horizontal_struts(unit_cell_size, strut_radius))
 			  .union(fcc_top_horizontal_struts(unit_cell_size, strut_radius))
