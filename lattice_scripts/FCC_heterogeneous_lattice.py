@@ -7,9 +7,9 @@ min_strut_diameter = 1
 max_strut_diameter = 3
 min_node_diameter = 1.1
 max_node_diameter = 3.3
-Nx = 2
-Ny = 2
-Nz = 4
+Nx = 1
+Ny = 1
+Nz = 10
 
 # END USER INPUT
 

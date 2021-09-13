@@ -51,12 +51,11 @@ def create_diagonal_strut(
 		
 	"""
 	hypot2D = hypot(unit_cell_size, unit_cell_size)
-	hypot3D = hypot(hypot2D, unit_cell_size)
 	result = (
 		cq.Workplane()
 		.transformed(rotate = cq.Vector(angle_x, angle_y, 0))
 		.circle(radius)
-		.extrude(hypot3D)
+		.extrude(hypot2D)
 	)
 	return result.val().located(location)
 
@@ -81,11 +80,14 @@ def fcc_diagonals(
 		
 	"""
 	# In a cube ABCDA1B1C1D1 this is the angle ABA1
-	angle_ABA1 = 45.0
 	corner_points = unit_cell_size * np.array(
 		[(0, 0),
+		(0, 0),
+		(1, 0),
 		(1, 0),
 		(1, 1),
+		(1, 1),
+		(0, 1),
 		(0, 1)]
 	)
 	result = (
@@ -95,21 +97,37 @@ def fcc_diagonals(
 			create_diagonal_strut,
 			callback_extra_args = [
 				{"unit_cell_size": unit_cell_size,
-				"radius": strut_radius,
+				 "radius": strut_radius,
 				 "angle_x": - 45,
 				 "angle_y": 0},
 				{"unit_cell_size": unit_cell_size,
 				"radius": strut_radius,
+				 "angle_x": 0,
+				 "angle_y": 45},
+				{"unit_cell_size": unit_cell_size,
+				"radius": strut_radius,
+				 "angle_x": 0,
+				 "angle_y": - 45},
+				{"unit_cell_size": unit_cell_size,
+				 "radius": strut_radius,
 				 "angle_x": - 45,
-				 "angle_y": - 0},
+				 "angle_y": 0},
+				{"unit_cell_size": unit_cell_size,
+				 "radius": strut_radius,
+				 "angle_x": 45,
+				 "angle_y": 0},
+				{"unit_cell_size": unit_cell_size,
+				 "radius": strut_radius,
+				 "angle_x": 0,
+				 "angle_y": - 45},
+				{"unit_cell_size": unit_cell_size,
+				 "radius": strut_radius,
+				 "angle_x": 45,
+				 "angle_y": 0},
 				{"unit_cell_size": unit_cell_size,
 				"radius": strut_radius,
-				 "angle_x": 45,
-				 "angle_y": - 0},
-				{"unit_cell_size": unit_cell_size,
-				"radius": strut_radius,
-				 "angle_x": 45,
-				 "angle_y": 0}
+				 "angle_x": 0,
+				 "angle_y": 45}
 				],
 			useLocalCoords = True
 		)
@@ -118,7 +136,9 @@ def fcc_diagonals(
 # Register our custom plugin before use.
 cq.Workplane.bcc_diagonals = fcc_diagonals
 
-def fcc_vertical_struts(unit_cell_size, strut_radius):
+def fcc_vertical_struts(
+	unit_cell_size: np.float64,
+	strut_radius: np.float64):
 	result = cq.Workplane("XY")
 	corner_points = unit_cell_size * np.array(
 		[(0, 0),
