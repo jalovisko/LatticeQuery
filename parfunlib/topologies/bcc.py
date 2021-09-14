@@ -188,7 +188,7 @@ def bcc_top_horizontal_struts(unit_cell_size, strut_radius):
 cq.Workplane.bcc_top_horizontal_struts = bcc_top_horizontal_struts
 
 # Creates 4 nodes at the XY plane of each unit cell
-def createNodes(node_diameter,
+def create_nodes(node_diameter,
 				unit_cell_size,
 				delta = 0.01 # a small coefficient is needed because CQ thinks that it cuts through emptiness
 				):
@@ -239,7 +239,7 @@ def createNodes(node_diameter,
 				 )
 			 )
 	return result
-cq.Workplane.createNodes = createNodes
+cq.Workplane.create_nodes = create_nodes
 
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter):
 	result = cq.Workplane("XY")
@@ -248,7 +248,7 @@ def unit_cell(location, unit_cell_size, strut_radius, node_diameter):
 			  .union(bcc_vertical_struts(unit_cell_size, strut_radius))
 			  .union(bcc_bottom_horizontal_struts(unit_cell_size, strut_radius))
 			  .union(bcc_top_horizontal_struts(unit_cell_size, strut_radius))
-			  .union(createNodes(node_diameter, unit_cell_size))
+			  .union(create_nodes(node_diameter, unit_cell_size))
 			  )
 	return result.val().located(location)
 cq.Workplane.unit_cell = unit_cell

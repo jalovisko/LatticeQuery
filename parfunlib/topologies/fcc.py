@@ -208,7 +208,7 @@ def fcc_top_horizontal_struts(unit_cell_size, strut_radius):
 cq.Workplane.fcc_top_horizontal_struts = fcc_top_horizontal_struts
 
 # Creates 4 nodes at the XY plane of each unit cell
-def createNodes(node_diameter,
+def create_nodes(node_diameter,
 				unit_cell_size,
 				delta = 0.01 # a small coefficient is needed because CQ thinks that it cuts through emptiness
 				):
@@ -245,21 +245,27 @@ def createNodes(node_diameter,
 					  )
 				  )
 	half_unit_cell_size = unit_cell_size / 2
-	result= (result
-			 .union(
-				 cq.Workplane()
-				 .transformed(offset = cq.Vector(half_unit_cell_size,
-												 half_unit_cell_size,
-												 half_unit_cell_size))
-				 .box(added_node_diameter, added_node_diameter, added_node_diameter)
-				 .edges("|Z")
-				 .fillet(node_radius)
-				 .edges("|X")
-				 .fillet(node_radius)
-				 )
-			 )
+	middle_points = unit_cell_size * np.array(
+		[(0.5, 0),
+		(1, 0.5),
+		(0.5, 1),
+		(0, 0.5)]
+	)
+	for point in middle_points:
+		result= (result
+				  .union(
+					  cq.Workplane()
+					  .transformed(offset = cq.Vector(point[0], point[1], half_unit_cell_size))
+					  .box(added_node_diameter, added_node_diameter, added_node_diameter)
+					  .edges("|Z")
+					  .fillet(node_radius)
+					  .edges("|X")
+					  .fillet(node_radius)
+					  )
+				  )
+
 	return result
-cq.Workplane.createNodes = createNodes
+cq.Workplane.create_nodes = create_nodes
 
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter):
 	result = cq.Workplane("XY")
@@ -268,7 +274,7 @@ def unit_cell(location, unit_cell_size, strut_radius, node_diameter):
 			  .union(fcc_vertical_struts(unit_cell_size, strut_radius))
 			  .union(fcc_bottom_horizontal_struts(unit_cell_size, strut_radius))
 			  .union(fcc_top_horizontal_struts(unit_cell_size, strut_radius))
-			  .union(createNodes(node_diameter, unit_cell_size))
+			  .union(create_nodes(node_diameter, unit_cell_size))
 			  )
 	return result.val().located(location)
 cq.Workplane.unit_cell = unit_cell

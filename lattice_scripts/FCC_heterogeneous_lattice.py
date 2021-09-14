@@ -1,4 +1,4 @@
-from parfunlib.topologies.fcc import fcc_heterogeneous_lattice
+mfrom parfunlib.topologies.fcc import fcc_heterogeneous_lattice
 
 # USER INPUT
 
