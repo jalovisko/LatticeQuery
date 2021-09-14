@@ -48,7 +48,6 @@ def create_diagonal_strut(
 	-------
 		cq.occ_impl.shapes.Compound
 			a solid model of the strut
-		
 	"""
 	hypot2D = hypot(unit_cell_size, unit_cell_size)
 	result = (
@@ -59,9 +58,8 @@ def create_diagonal_strut(
 	)
 	return result.val().located(location)
 
-def fcc_diagonals(
-		unit_cell_size: np.float64,
-		strut_radius: np.float64) -> cq.cq.Workplane:
+def fcc_diagonals(unit_cell_size: np.float64,
+					strut_radius: np.float64) -> cq.cq.Workplane:
 	"""
 	Creates a solid model of the diagonals in a FCC unit cell.
 
@@ -71,13 +69,12 @@ def fcc_diagonals(
             point location of the strut
         unit_cell_size : np.float64
             unit cell size (in mm)
-		strut_radius: np.float64
+		strut_radius : np.float64
 			strut radius (in mm)
 	Returns
 	-------
-		cq.occ_impl.shapes.Compound
+		result : cq.occ_impl.shapes.Compound
 			a solid model of the strut
-		
 	"""
 	# In a cube ABCDA1B1C1D1 this is the angle ABA1
 	corner_points = unit_cell_size * np.array(
@@ -136,9 +133,22 @@ def fcc_diagonals(
 # Register our custom plugin before use.
 cq.Workplane.bcc_diagonals = fcc_diagonals
 
-def fcc_vertical_struts(
-	unit_cell_size: np.float64,
-	strut_radius: np.float64):
+def fcc_vertical_struts(unit_cell_size: np.float64,
+						strut_radius: np.float64) -> cq.cq.Workplane:
+	"""
+	Creates vertical struts of a unit cell.
+
+	Parameters
+    ----------
+        unit_cell_size : np.float64
+            unit cell size (in mm)
+		strut_radius: np.float64
+			strut radius (in mm)
+	Returns
+	-------
+		result : cq.cq.Workplane
+			a solid model of the union of all vertical struts
+	"""
 	result = cq.Workplane("XY")
 	corner_points = unit_cell_size * np.array(
 		[(0, 0),

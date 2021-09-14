@@ -118,7 +118,23 @@ def bcc_diagonals(
 # Register our custom plugin before use.
 cq.Workplane.bcc_diagonals = bcc_diagonals
 
-def bcc_vertical_struts(unit_cell_size, strut_radius):
+def bcc_vertical_struts(
+		unit_cell_size: np.float64,
+		strut_radius: np.float64) -> cq.cq.Workplane:
+	"""
+	Creates vertical struts of a unit cell.
+
+	Parameters
+    ----------
+        unit_cell_size : np.float64
+            unit cell size (in mm)
+		strut_radius: np.float64
+			strut radius (in mm)
+	Returns
+	-------
+		result: cq.cq.Workplane
+			a solid model of the union of all vertical struts
+	"""
 	result = cq.Workplane("XY")
 	corner_points = unit_cell_size * np.array(
 		[(0, 0),

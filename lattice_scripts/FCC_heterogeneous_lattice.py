@@ -1,4 +1,4 @@
-mfrom parfunlib.topologies.fcc import fcc_heterogeneous_lattice
+from parfunlib.topologies.fcc import fcc_heterogeneous_lattice
 
 # USER INPUT
 
@@ -9,7 +9,7 @@ min_node_diameter = 0.6
 max_node_diameter = 2.5
 Nx = 1
 Ny = 1
-Nz = 10
+Nz = 1
 
 # END USER INPUT
 
