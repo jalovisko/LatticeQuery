@@ -1,4 +1,4 @@
-from parfunlib.topologies.BCC import BCC_heterogeneous_lattice
+from parfunlib.topologies.bcc import bcc_heterogeneous_lattice
 
 # USER INPUT
 
@@ -9,15 +9,15 @@ min_node_diameter = 1.1
 max_node_diameter = 3.3
 Nx = 2
 Ny = 2
-Nz = 10
+Nz = 2
 
 # END USER INPUT
 
 # Register our custom plugin before use.
-cq.Workplane.BCC_heterogeneous_lattice = BCC_heterogeneous_lattice
+cq.Workplane.bcc_heterogeneous_lattice = bcc_heterogeneous_lattice
 
 #result = unit_cell(unit_cell_size, strut_radius)
-result = BCC_heterogeneous_lattice(unit_cell_size,
+result = bcc_heterogeneous_lattice(unit_cell_size,
                                     min_strut_diameter, 
                                     max_strut_diameter,
                                     min_node_diameter,
