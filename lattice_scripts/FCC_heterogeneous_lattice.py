@@ -22,7 +22,7 @@ result = fbcc_heterogeneous_lattice(unit_cell_size,
                                     max_strut_diameter,
                                     min_node_diameter,
                                     max_node_diameter,
-                                    Nx, Ny, Nz
-                                    #type = 'bccz'
+                                    Nx, Ny, Nz,
+                                    type = 'sfbcc'
                                     #rule = 'sin'
                                     )

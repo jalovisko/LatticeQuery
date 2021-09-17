@@ -277,6 +277,9 @@ def bcc_heterogeneous_lattice(unit_cell_size,
 							  Nx, Ny, Nz,
 							  type = 'bcc',
 							  rule = 'linear'):
+	if type not in ['bcc', 'bccz', 'sbcc', 'sbccz']:
+		raise TypeError(f'The type \'{type}\' does not exist!')
+
 	min_strut_radius = min_strut_diameter / 2.0
 	max_strut_radius = max_strut_diameter / 2.0
 	if rule == 'linear':
