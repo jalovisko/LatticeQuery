@@ -14,7 +14,7 @@
 
 from ..commons import eachpointAdaptive
 
-from math import hypot, acos, degrees
+from math import hypot, acos, degrees, hypot
 import numpy as np
 
 import cadquery as cq
@@ -193,6 +193,31 @@ def fcc_bottom_horizontal_struts(unit_cell_size, strut_radius):
 # Register our custom plugin before use.
 cq.Workplane.fcc_bottom_horizontal_struts = fcc_bottom_horizontal_struts
 
+def fcc_horizontal_diagonal_struts(unit_cell_size, strut_radius):
+	result = cq.Workplane("XY")
+	corner_points = unit_cell_size * np.array(
+		[(0, 0, 0),
+		(1, 0, 0),
+		(1, 1, 1),
+		(0, 1, 1)]
+	)
+	angle = 135.0
+	hypot2D = hypot(unit_cell_size, unit_cell_size)
+	for point in corner_points:
+		result = (result
+				  .union(
+					  cq.Workplane()
+					  .transformed(offset = cq.Vector(point[0], point[1], point[2]),
+								   rotate = cq.Vector(90, angle, 0))
+					  .circle(strut_radius)
+					  .extrude(hypot2D)
+					  )
+				  )
+		angle += 90
+	return result
+# Register our custom plugin before use.
+cq.Workplane.fcc_horizontal_diagonal_struts = fcc_horizontal_diagonal_struts
+
 def fcc_top_horizontal_struts(unit_cell_size, strut_radius):
 	result = cq.Workplane("XY")
 	angle = 90
@@ -229,7 +254,8 @@ def create_nodes(node_diameter,
 		[(0, 0),
 		(1, 0),
 		(1, 1),
-		(0, 1)]
+		(0, 1),
+		(0.5, 0.5)]
 	)
 	for point in corner_points:
 		result= (result
@@ -282,8 +308,7 @@ def unit_cell(location, unit_cell_size, strut_radius, node_diameter):
 	result = (result
 			  .union(fcc_diagonals(unit_cell_size, strut_radius))
 			  .union(fcc_vertical_struts(unit_cell_size, strut_radius))
-			  .union(fcc_bottom_horizontal_struts(unit_cell_size, strut_radius))
-			  .union(fcc_top_horizontal_struts(unit_cell_size, strut_radius))
+			  .union(fcc_horizontal_diagonal_struts(unit_cell_size, strut_radius))
 			  .union(create_nodes(node_diameter, unit_cell_size))
 			  )
 	return result.val().located(location)
