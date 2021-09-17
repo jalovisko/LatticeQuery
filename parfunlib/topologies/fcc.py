@@ -131,7 +131,7 @@ def fcc_diagonals(unit_cell_size: np.float64,
 	)
 	return result
 # Register our custom plugin before use.
-cq.Workplane.bcc_diagonals = fcc_diagonals
+cq.Workplane.fcc_diagonals = fcc_diagonals
 
 def fcc_vertical_struts(unit_cell_size: np.float64,
 						strut_radius: np.float64) -> cq.cq.Workplane:

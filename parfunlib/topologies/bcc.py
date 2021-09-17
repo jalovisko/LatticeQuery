@@ -260,10 +260,9 @@ cq.Workplane.create_nodes = create_nodes
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter, type):
 	result = cq.Workplane("XY")
 	result = result.union(bcc_diagonals(unit_cell_size, strut_radius))
-	if type != 'default':
-		result = result.union(bcc_vertical_struts(unit_cell_size, strut_radius))
-		result = result.union(bcc_bottom_horizontal_struts(unit_cell_size, strut_radius))
-		result = result.union(bcc_top_horizontal_struts(unit_cell_size, strut_radius))
+	#result = result.union(bcc_vertical_struts(unit_cell_size, strut_radius))
+	#result = result.union(bcc_bottom_horizontal_struts(unit_cell_size, strut_radius))
+	#result = result.union(bcc_top_horizontal_struts(unit_cell_size, strut_radius))
 	if type == 'bccz':
 		result = result.union(bcc_vertical_struts(unit_cell_size, strut_radius))
 	result = result.union(create_nodes(node_diameter, unit_cell_size))
@@ -276,7 +275,7 @@ def bcc_heterogeneous_lattice(unit_cell_size,
 							  min_node_diameter,
 							  max_node_diameter,
 							  Nx, Ny, Nz,
-							  type = 'default',
+							  type = 'bcc',
 							  rule = 'linear'):
 	min_strut_radius = min_strut_diameter / 2.0
 	max_strut_radius = max_strut_diameter / 2.0
