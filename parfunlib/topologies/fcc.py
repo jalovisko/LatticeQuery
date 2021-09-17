@@ -257,7 +257,7 @@ def create_nodes(node_diameter,
 		(1, 1),
 		(0, 1)]
 	)
-	if type == 'fcc':
+	if type in ['fcc', 'fbcc']:
 		corner_points = np.vstack([corner_points, unit_cell_size * np.array([(0.5, 0.5)])])
 	for point in corner_points:
 		result= (result
@@ -308,8 +308,9 @@ cq.Workplane.create_nodes = create_nodes
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter, type):
 	result = cq.Workplane("XY")
 	result = result.union(fcc_diagonals(unit_cell_size, strut_radius))
-	#result = result.union(fcc_vertical_struts(unit_cell_size, strut_radius))
-	if type == 'fcc':
+	if type in ['sfccz', 'sfbcc']:
+		result = result.union(fcc_vertical_struts(unit_cell_size, strut_radius))
+	if type in ['fcc', 'fbcc']:
 		result = result.union(fcc_horizontal_diagonal_struts(unit_cell_size, strut_radius))
 	result = result.union(create_nodes(node_diameter, unit_cell_size, type))
 	return result.val().located(location)
@@ -323,6 +324,8 @@ def fcc_heterogeneous_lattice(unit_cell_size,
 							  Nx, Ny, Nz,
 							  type = 'fcc',
 							  rule = 'linear'):
+	if type not in ['fcc', 'sfcc', 'sfccz']:
+		raise TypeError(f'The type \'{type}\' does not exist!')
 	min_strut_radius = min_strut_diameter / 2.0
 	max_strut_radius = max_strut_diameter / 2.0
 	if rule == 'linear':
