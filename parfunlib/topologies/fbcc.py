@@ -42,16 +42,16 @@ cq.Workplane.create_nodes = create_nodes
 
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter, type):
 	result = cq.Workplane("XY")
+	result = result.union(bcc_diagonals(unit_cell_size, strut_radius))
 	result = result.union(fcc_diagonals(unit_cell_size, strut_radius))
-	if type == 'sfbcc':
+	if type in ['sfbcc', 'sfbccz']:
 		result = result.union(create_nodes(node_diameter, unit_cell_size, type))
 	if type in ['fbccz', 'sfbccz']:
 		result = result.union(fcc_vertical_struts(unit_cell_size, strut_radius))
 	if type == 'fbcc':
 		result = result.union(fcc_horizontal_diagonal_struts(unit_cell_size, strut_radius))
 		result = result.union(create_nodes(node_diameter, unit_cell_size, type))
-	result = result.union(bcc_diagonals(unit_cell_size, strut_radius))
-	result = result.union(create_bcc_nodes(node_diameter, unit_cell_size))
+	#result = result.union(create_bcc_nodes(node_diameter, unit_cell_size))
 	return result.val().located(location)
 cq.Workplane.unit_cell = unit_cell
 
