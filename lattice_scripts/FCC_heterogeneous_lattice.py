@@ -1,4 +1,4 @@
-from parfunlib.topologies.fbcc import fbcc_heterogeneous_lattice
+from parfunlib.topologies.fcc import fcc_heterogeneous_lattice
 
 # USER INPUT
 
@@ -14,15 +14,15 @@ Nz = 1
 # END USER INPUT
 
 # Register our custom plugin before use.
-cq.Workplane.fbcc_heterogeneous_lattice = fbcc_heterogeneous_lattice
+cq.Workplane.fcc_heterogeneous_lattice = fcc_heterogeneous_lattice
 
 #result = unit_cell(unit_cell_size, strut_radius)
-result = fbcc_heterogeneous_lattice(unit_cell_size,
+result = fcc_heterogeneous_lattice(unit_cell_size,
                                     min_strut_diameter, 
                                     max_strut_diameter,
                                     min_node_diameter,
                                     max_node_diameter,
-                                    Nx, Ny, Nz
-                                    #type = 'bccz'
+                                    Nx, Ny, Nz,
+                                    type = 'fcc'
                                     #rule = 'sin'
                                     )
