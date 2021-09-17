@@ -3,13 +3,13 @@ from parfunlib.topologies.fcc import fcc_heterogeneous_lattice
 # USER INPUT
 
 unit_cell_size = 10
-min_strut_diameter = 0.5
+min_strut_diameter = 2.5
 max_strut_diameter = 2.5
-min_node_diameter = 0.7
-max_node_diameter = 3.5
+min_node_diameter = 3.7
+max_node_diameter = 3.7
 Nx = 1
 Ny = 1
-Nz = 10
+Nz = 1
 
 # END USER INPUT
 
@@ -23,5 +23,6 @@ result = fcc_heterogeneous_lattice(unit_cell_size,
                                     min_node_diameter,
                                     max_node_diameter,
                                     Nx, Ny, Nz
+                                    #type = 'bccz'
                                     #rule = 'sin'
                                     )
