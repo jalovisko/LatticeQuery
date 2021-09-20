@@ -51,7 +51,6 @@ def gyroid_000(self, thickness, unit_cell_size):
     plate_4 = cq.Workplane("XY")
     plate_4 = plate_4.interpPlate(edge_wire, surface_points, thickness)
     return self.union(self.eachpoint(lambda loc: plate_4.val().located(loc), True))
-
 cq.Workplane.gyroid_000 = gyroid_000
 
 def unit_cell(location, thickness, unit_cell_size,
@@ -61,8 +60,10 @@ def unit_cell(location, thickness, unit_cell_size,
     # Octante 000
     pnts = [tuple(unit_cell_size / 2 for i in range(3))]
     cq.Workplane.gyroid_000 = gyroid_000
-    g_000 = (cq.Workplane("XY").pushPoints(pnts)
-             .gyroid_000(thickness, unit_cell_size))
+    g_000 = (cq.Workplane("XY")
+                .pushPoints(pnts)
+                .gyroid_000(thickness, unit_cell_size)
+            )
     result = g_000
     # Octante 100
     mirZY_pos = g_000.mirror(mirrorPlane = "ZY",
@@ -71,8 +72,9 @@ def unit_cell(location, thickness, unit_cell_size,
                              basePointVector = (0, half_unit_cell_size, 0))
     result = result.union(g_100)
     # Octante 110
-    g_000_inverse = (cq.Workplane("XY").pushPoints(pnts)
-                     .gyroid_000(- thickness, unit_cell_size))
+    g_000_inverse = (cq.Workplane("XY")
+                        .pushPoints(pnts)
+                        .gyroid_000(- thickness, unit_cell_size))
     mirXZ_pos = g_000_inverse.mirror(mirrorPlane = "XZ",
                                      basePointVector = (0, unit_cell_size, 0))
     g_110 = mirXZ_pos.translate((unit_cell_size, 0, 0))
