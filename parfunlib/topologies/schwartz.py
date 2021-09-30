@@ -113,10 +113,16 @@ def gyroid_homogeneous_lattice(unit_cell_size,
 def schwartz_heterogeneous_lattice(unit_cell_size,
                                 min_thickness,
                                 max_thickness,
-                                Nx, Ny, Nz):
+                                Nx, Ny, Nz,
+                                rule = 'linear'):
     # Register the custrom plugin 
     cq.Workplane.eachpointAdaptive = eachpointAdaptive
-    thicknesses = np.linspace(min_thickness, max_thickness, Nz)
+    if rule == 'linear':
+        thicknesses = np.linspace(min_thickness, max_thickness, Nz)
+    if rule == 'sin':
+        average = lambda num1, num2: (num1 + num2) / 2
+        x_data = np.linspace(0, Nz, num = Nz)
+        thicknesses = np.sin(x_data) + average(min_thickness, max_thickness)
     UC_pnts = []
     for i in range(Nx):
         for j in range(Ny):
