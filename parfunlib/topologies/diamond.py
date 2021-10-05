@@ -29,7 +29,7 @@ PNT_LEVELS = [
 		[(0.75, 0.25), (0.25, 0.75)],
 		[(0.5, 0), (1, 0.5), (0.5, 1), (0, 0.5)],
 		[(0.25, 0.25), (0.75, 0.75)],
-		[(0, 0), (1, 1)]
+		[(0, 0), (0.5, 0.5), (1, 1)]
 		]
 
 def create_strut(
@@ -94,11 +94,75 @@ def create_diamond_struts(
 	angle_x = 45
 	# In a cube ABCDA1B1C1D1 this is the angle C1AD
 	angle_c1ad = 90 - degrees(acos(3**-.5))
+	# 4 bottom struts
 	result = create_strut(unit_cell_size,
 							(unit_cell_size, 0, 0),
 							(-45, -angle_c1ad, 0),
-							radius
-	)
+							radius)
+	result = result.union(create_strut(unit_cell_size,
+										(0.5*unit_cell_size, 0.5*unit_cell_size, 0),
+										(-45, - angle_c1ad, 0),
+										radius))
+	result = result.union(create_strut(unit_cell_size,
+										(0.5*unit_cell_size, 0.5*unit_cell_size, 0),
+										(45, angle_c1ad, 0),
+										radius))
+	result = result.union(create_strut(unit_cell_size,
+										(0, unit_cell_size, 0),
+										(45, angle_c1ad, 0),
+										radius))
+	# 4 2nd level struts
+	result = result.union(create_strut(unit_cell_size,
+										(0.75 * unit_cell_size, 0.25 * unit_cell_size, 0.25 * unit_cell_size),
+										(-45, angle_c1ad, 0),
+										radius))
+	result = result.union(create_strut(unit_cell_size,
+										(0.75 * unit_cell_size, 0.25 * unit_cell_size, 0.25 * unit_cell_size),
+										(45, - angle_c1ad, 0),
+										radius))
+	result = result.union(create_strut(unit_cell_size,
+										(0.25 * unit_cell_size, 0.75 * unit_cell_size, 0.25 * unit_cell_size),
+										(-45, angle_c1ad, 0),
+										radius))
+	result = result.union(create_strut(unit_cell_size,
+										(0.25 * unit_cell_size, 0.75 * unit_cell_size, 0.25 * unit_cell_size),
+										(45, - angle_c1ad, 0),
+										radius))
+	# 4 3rd level struts
+	result = result.union(create_strut(unit_cell_size,
+										(0.5 * unit_cell_size, 0, 0.5 * unit_cell_size),
+										(-45, - angle_c1ad, 0),
+										radius))
+	result = result.union(create_strut(unit_cell_size,
+										(unit_cell_size, 0.5 * unit_cell_size, 0.5 * unit_cell_size),
+										(-45, - angle_c1ad, 0),
+										radius))
+	result = result.union(create_strut(unit_cell_size,
+										(0.5 * unit_cell_size, unit_cell_size, 0.5 * unit_cell_size),
+										(45, angle_c1ad, 0),
+										radius))
+	result = result.union(create_strut(unit_cell_size,
+										(0, 0.5 * unit_cell_size, 0.5 * unit_cell_size),
+										(45, angle_c1ad, 0),
+										radius))
+	# 4 top struts
+	result = result.union(create_strut(unit_cell_size,
+										(0.25*unit_cell_size, 0.25*unit_cell_size, 0.75 * unit_cell_size),
+										(45, - angle_c1ad, 0),
+										radius))
+	result = result.union(create_strut(unit_cell_size,
+										(0.25*unit_cell_size, 0.25*unit_cell_size, 0.75 * unit_cell_size),
+										(- 45, angle_c1ad, 0),
+										radius))
+	result = result.union(create_strut(unit_cell_size,
+										(0.75*unit_cell_size, 0.75*unit_cell_size, 0.75 * unit_cell_size),
+										(45, - angle_c1ad, 0),
+										radius))
+	result = result.union(create_strut(unit_cell_size,
+										(0.75*unit_cell_size, 0.75*unit_cell_size, 0.75 * unit_cell_size),
+										(- 45, angle_c1ad, 0),
+										radius))
+
 	return result
 # Register our custom plugin before use.
 cq.Workplane.create_diamond_struts = create_diamond_struts
