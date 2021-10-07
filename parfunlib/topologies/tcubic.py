@@ -141,15 +141,45 @@ def t_struts(strut_radius,
 	truncation_delta = truncation * unit_cell_size / 2
 	result = cq.Workplane("XY")
 	for point in corner_points:
+		if point[0] == 0:
+			t = truncation_delta 
+			angle_x = - 45
+		else:
+			t = - truncation_delta
+			angle_x = 45
+		if point[1] == 0:
+			angle_z = -45
+		else:
+			angle_z = 45
+
 		result = result.union(
 			cq.Workplane()
-			.transformed(offset = cq.Vector(point[0] + truncation_delta,
-												point[1] + 0,
+			.transformed(offset = cq.Vector(point[0] + t,
+												point[1],
 												0),
-						rotate = cq.Vector(135,0,0))
+						rotate = cq.Vector(0, angle_x, 0))
 			.circle(strut_radius)
-			.extrude(unit_cell_size - 2 * truncation_delta)
+			.extrude(hypot(truncation_delta, truncation_delta))
 		)
+		result = result.union(
+			cq.Workplane()
+			.transformed(offset = cq.Vector(point[0] + t,
+												point[1],
+												0),
+						rotate = cq.Vector(angle_z *2, angle_z, 0))
+			.circle(strut_radius)
+			.extrude(hypot(truncation_delta, truncation_delta))
+		)
+		result = result.union(
+			cq.Workplane()
+			.transformed(offset = cq.Vector(point[0] + t,
+												point[1],
+												unit_cell_size),
+						rotate = cq.Vector(0, angle_x * 3, 0))
+			.circle(strut_radius)
+			.extrude(hypot(truncation_delta, truncation_delta))
+		)
+	return result
 # Register our custom plugin before use.
 cq.Workplane.t_struts = t_struts
 
@@ -199,7 +229,7 @@ def create_nodes(node_diameter,
 						.fillet(node_radius)
 						)
 					)
-			result= (result
+			result = (result
 					.union(
 						cq.Workplane()
 						.transformed(offset = cq.Vector(point[0] + t_node[0],
