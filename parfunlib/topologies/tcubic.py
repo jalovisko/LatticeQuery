@@ -140,21 +140,24 @@ def t_struts(strut_radius,
 	)
 	truncation_delta = truncation * unit_cell_size / 2
 	result = cq.Workplane("XY")
+	angle_z = - 135
 	for point in corner_points:
 		if point[0] == 0:
-			t = truncation_delta 
+			t_xz = truncation_delta 
 			angle_x = - 45
 		else:
-			t = - truncation_delta
+			t_xz = - truncation_delta
 			angle_x = 45
 		if point[1] == 0:
-			angle_z = -45
+			t_yz = truncation_delta
+			angle_y = 45
 		else:
-			angle_z = 45
-
+			t_yz = - truncation_delta
+			angle_y = - 45
+		# Struts that are in XZ in the first octan
 		result = result.union(
 			cq.Workplane()
-			.transformed(offset = cq.Vector(point[0] + t,
+			.transformed(offset = cq.Vector(point[0] + t_xz,
 												point[1],
 												0),
 						rotate = cq.Vector(0, angle_x, 0))
@@ -163,22 +166,54 @@ def t_struts(strut_radius,
 		)
 		result = result.union(
 			cq.Workplane()
-			.transformed(offset = cq.Vector(point[0] + t,
-												point[1],
-												0),
-						rotate = cq.Vector(angle_z *2, angle_z, 0))
-			.circle(strut_radius)
-			.extrude(hypot(truncation_delta, truncation_delta))
-		)
-		result = result.union(
-			cq.Workplane()
-			.transformed(offset = cq.Vector(point[0] + t,
+			.transformed(offset = cq.Vector(point[0] + t_xz,
 												point[1],
 												unit_cell_size),
 						rotate = cq.Vector(0, angle_x * 3, 0))
 			.circle(strut_radius)
 			.extrude(hypot(truncation_delta, truncation_delta))
 		)
+		# Struts that are in XY in the first octan
+		result = result.union(
+			cq.Workplane()
+			.transformed(offset = cq.Vector(point[0] + t_xz,
+												point[1],
+												0),
+						rotate = cq.Vector(90, angle_z, 0))
+			.circle(strut_radius)
+			.extrude(hypot(truncation_delta, truncation_delta))
+		)
+		result = result.union(
+			cq.Workplane()
+			.transformed(offset = cq.Vector(point[0] + t_xz,
+												point[1],
+												unit_cell_size),
+						rotate = cq.Vector(90, angle_z, 0))
+			.circle(strut_radius)
+			.extrude(hypot(truncation_delta, truncation_delta))
+		)
+		angle_z -= 90
+		# Struts that are in YZ in the first octan
+		result = result.union(
+			cq.Workplane()
+			.transformed(offset = cq.Vector(point[0],
+												point[1] + t_yz,
+												0),
+						rotate = cq.Vector(angle_y, 0, 0))
+			.circle(strut_radius)
+			.extrude(hypot(truncation_delta, truncation_delta))
+		)
+		result = result.union(
+			cq.Workplane()
+			.transformed(offset = cq.Vector(point[0],
+												point[1] + t_yz,
+												unit_cell_size),
+						rotate = cq.Vector(3*angle_y, 0, 0))
+			.circle(strut_radius)
+			.extrude(hypot(truncation_delta, truncation_delta))
+		)
+
+		
 	return result
 # Register our custom plugin before use.
 cq.Workplane.t_struts = t_struts
