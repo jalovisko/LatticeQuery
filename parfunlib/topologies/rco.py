@@ -27,7 +27,7 @@ def z_struts(
 		strut_radius: np.float64,
 		truncation: np.float64) -> cq.cq.Workplane:
 	"""
-	Creates vertical struts of a unit cell.po
+	Creates vertical struts of a unit cell
 
 	Parameters
     ----------
@@ -43,11 +43,16 @@ def z_struts(
 			a solid model of the union of all vertical struts
 	"""
 	result = cq.Workplane("XY")
+	half_truncation = 0.5 * truncation
 	corner_points = unit_cell_size * np.array(
-		[(0, 0),
-		(1, 0),
-		(1, 1),
-		(0, 1)]
+		[(half_truncation, 0),
+		(1 - half_truncation, 0),
+		(1, half_truncation),
+		(1, 1 - half_truncation),
+		(1 - half_truncation, 1),
+		(half_truncation, 1),
+		(0, 1 - half_truncation),
+		(0, half_truncation)]
 	)
 	truncation_delta = truncation * unit_cell_size / 2
 	for point in corner_points:
@@ -85,7 +90,7 @@ def bottom_xy_struts(unit_cell_size, strut_radius, truncation):
 					  cq.Workplane()
 					  .transformed(offset = cq.Vector(point[0] + truncation_data[idp][0],
 					  		  				point[1] + truncation_data[idp][1],
-							  				0),
+							  				truncation_delta),
 								   rotate = cq.Vector(90, angle, 0))
 					  .circle(strut_radius)
 					  .extrude(unit_cell_size - 2 * truncation_delta)
@@ -118,7 +123,7 @@ def top_xy_struts(unit_cell_size, strut_radius, truncation):
 					  cq.Workplane()
 					  .transformed(offset = cq.Vector(point[0] + truncation_data[idp][0],
 					  		  					point[1] + truncation_data[idp][1],
-												unit_cell_size),
+												unit_cell_size - truncation_delta),
 								   rotate = cq.Vector(90, angle, 0))
 					  .circle(strut_radius)
 					  .extrude(unit_cell_size - 2 * truncation_delta)
@@ -158,7 +163,7 @@ def t_struts(strut_radius,
 		result = result.union(
 			cq.Workplane()
 			.transformed(offset = cq.Vector(point[0] + t_xz,
-												point[1],
+												point[1] + t_yz,
 												0),
 						rotate = cq.Vector(0, angle_x, 0))
 			.circle(strut_radius)
@@ -167,7 +172,7 @@ def t_struts(strut_radius,
 		result = result.union(
 			cq.Workplane()
 			.transformed(offset = cq.Vector(point[0] + t_xz,
-												point[1],
+												point[1] + t_yz,
 												unit_cell_size),
 						rotate = cq.Vector(0, angle_x * 3, 0))
 			.circle(strut_radius)
@@ -178,7 +183,7 @@ def t_struts(strut_radius,
 			cq.Workplane()
 			.transformed(offset = cq.Vector(point[0] + t_xz,
 												point[1],
-												0),
+												truncation_delta),
 						rotate = cq.Vector(90, angle_z, 0))
 			.circle(strut_radius)
 			.extrude(hypot(truncation_delta, truncation_delta))
@@ -187,7 +192,7 @@ def t_struts(strut_radius,
 			cq.Workplane()
 			.transformed(offset = cq.Vector(point[0] + t_xz,
 												point[1],
-												unit_cell_size),
+												unit_cell_size - truncation_delta),
 						rotate = cq.Vector(90, angle_z, 0))
 			.circle(strut_radius)
 			.extrude(hypot(truncation_delta, truncation_delta))
@@ -196,7 +201,7 @@ def t_struts(strut_radius,
 		# Struts that are in YZ in the first octan
 		result = result.union(
 			cq.Workplane()
-			.transformed(offset = cq.Vector(point[0],
+			.transformed(offset = cq.Vector(point[0] + t_xz,
 												point[1] + t_yz,
 												0),
 						rotate = cq.Vector(angle_y, 0, 0))
@@ -205,7 +210,7 @@ def t_struts(strut_radius,
 		)
 		result = result.union(
 			cq.Workplane()
-			.transformed(offset = cq.Vector(point[0],
+			.transformed(offset = cq.Vector(point[0] + t_xz,
 												point[1] + t_yz,
 												unit_cell_size),
 						rotate = cq.Vector(3*angle_y, 0, 0))
@@ -235,18 +240,18 @@ def create_nodes(node_diameter,
 	)
 	truncation_delta = truncation * unit_cell_size / 2
 	t_nodes = [
-		[[truncation_delta, 0, 0],
-		[0, truncation_delta, 0],
-		[0, 0, truncation_delta]],
-		[[-truncation_delta, 0, 0],
-		[0, truncation_delta, 0],
-		[0, 0, truncation_delta]],
-		[[-truncation_delta, 0, 0],
-		[0, -truncation_delta, 0],
-		[0, 0, truncation_delta]],
-		[[truncation_delta, 0, 0],
-		[0, -truncation_delta, 0],
-		[0, 0, truncation_delta]]
+		[[truncation_delta, 0, truncation_delta],
+		[0, truncation_delta, truncation_delta],
+		[truncation_delta, truncation_delta, 0]],
+		[[-truncation_delta, 0, truncation_delta],
+		[0, truncation_delta, truncation_delta],
+		[- truncation_delta, truncation_delta, 0]],
+		[[- truncation_delta, 0, truncation_delta],
+		[0, -truncation_delta, truncation_delta],
+		[- truncation_delta, - truncation_delta, 0]],
+		[[truncation_delta, 0, truncation_delta],
+		[0, - truncation_delta, truncation_delta],
+		[truncation_delta, - truncation_delta, 0]]
 	]
 	
 	for idp, point in enumerate(corner_points):
@@ -298,6 +303,10 @@ def rco_heterogeneous_lattice(unit_cell_size,
 							  Nx, Ny, Nz,
 							  truncation,
 							  rule = 'linear'):
+	"""
+	Rhombic Cubeoctahedron (RCO) heterogeneous lattice
+	structure
+	"""
 	if not 0 <= truncation <= 1:
 		raise ValueError("The truncation should take values from 0 to 1")
 	min_strut_radius = min_strut_diameter / 2.0
