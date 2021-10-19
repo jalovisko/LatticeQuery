@@ -78,19 +78,36 @@ def bottom_xy_struts(unit_cell_size, strut_radius, truncation):
 		(1, 1),
 		(0, 1)]
 	)
-	truncation_data = np.array(
+	truncation_data_top = np.array(
 		[(truncation_delta, 0),
 		(0, truncation_delta),
 		(- truncation_delta, 0),
 		(0, - truncation_delta)]
 	)
+	truncation_data_bottom = np.array(
+		[(truncation_delta, truncation_delta),
+		(- truncation_delta, truncation_delta),
+		(- truncation_delta, - truncation_delta),
+		(truncation_delta, - truncation_delta)]
+	)
 	for idp, point in enumerate(corner_points):
 		result = (result
 				  .union(
 					  cq.Workplane()
-					  .transformed(offset = cq.Vector(point[0] + truncation_data[idp][0],
-					  		  				point[1] + truncation_data[idp][1],
+					  .transformed(offset = cq.Vector(point[0] + truncation_data_top[idp][0],
+					  		  				point[1] + truncation_data_top[idp][1],
 							  				truncation_delta),
+								   rotate = cq.Vector(90, angle, 0))
+					  .circle(strut_radius)
+					  .extrude(unit_cell_size - 2 * truncation_delta)
+					  )
+				  )
+		result = (result
+				  .union(
+					  cq.Workplane()
+					  .transformed(offset = cq.Vector(point[0] + truncation_data_bottom[idp][0],
+					  		  				point[1] + truncation_data_bottom[idp][1],
+							  				0),
 								   rotate = cq.Vector(90, angle, 0))
 					  .circle(strut_radius)
 					  .extrude(unit_cell_size - 2 * truncation_delta)
@@ -111,19 +128,36 @@ def top_xy_struts(unit_cell_size, strut_radius, truncation):
 		(1, 1),
 		(0, 1)]
 	)
-	truncation_data = np.array(
+	truncation_data_bottom = np.array(
 		[(truncation_delta, 0),
 		(0, truncation_delta),
 		(- truncation_delta, 0),
 		(0, - truncation_delta)]
 	)
+	truncation_data_top = np.array(
+		[(truncation_delta, truncation_delta),
+		(- truncation_delta, truncation_delta),
+		(- truncation_delta, - truncation_delta),
+		(truncation_delta, - truncation_delta)]
+	)
 	for idp, point in enumerate(corner_points):
 		result = (result
 				  .union(
 					  cq.Workplane()
-					  .transformed(offset = cq.Vector(point[0] + truncation_data[idp][0],
-					  		  					point[1] + truncation_data[idp][1],
+					  .transformed(offset = cq.Vector(point[0] + truncation_data_bottom[idp][0],
+					  		  					point[1] + truncation_data_bottom[idp][1],
 												unit_cell_size - truncation_delta),
+								   rotate = cq.Vector(90, angle, 0))
+					  .circle(strut_radius)
+					  .extrude(unit_cell_size - 2 * truncation_delta)
+					  )
+				  )
+		result = (result
+				  .union(
+					  cq.Workplane()
+					  .transformed(offset = cq.Vector(point[0] + truncation_data_top[idp][0],
+					  		  				point[1] + truncation_data_top[idp][1],
+							  				unit_cell_size),
 								   rotate = cq.Vector(90, angle, 0))
 					  .circle(strut_radius)
 					  .extrude(unit_cell_size - 2 * truncation_delta)
