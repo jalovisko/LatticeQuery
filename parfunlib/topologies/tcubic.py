@@ -296,9 +296,10 @@ def tcubic_heterogeneous_lattice(unit_cell_size,
 							  min_node_diameter,
 							  max_node_diameter,
 							  Nx, Ny, Nz,
-							  truncation,
+							  min_truncation,
+							  max_truncation,
 							  rule = 'linear'):
-	if not 0 <= truncation <= 1:
+	if not 0 <= min_truncation <= 1 and not 0 <= max_truncation <= 1:
 		raise ValueError("The truncation should take values from 0 to 1")
 	min_strut_radius = min_strut_diameter / 2.0
 	max_strut_radius = max_strut_diameter / 2.0
@@ -307,8 +308,13 @@ def tcubic_heterogeneous_lattice(unit_cell_size,
 	   		 					  max_strut_radius,
 		    					  Nz)
 		node_diameters = np.linspace(min_node_diameter,
-	    							 max_node_diameter,
+	    							 max_truncation,
 		    						 Nz)
+	if rule == 'linear_truncation':
+		truncations = np.linspace(min_truncation,
+								max_truncation,
+								Nz)
+		print(truncations)
 	if rule == 'sin':
 		average = lambda num1, num2: (num1 + num2) / 2
 		strut_radii = np.sin(
@@ -326,10 +332,16 @@ def tcubic_heterogeneous_lattice(unit_cell_size,
 	unit_cell_params = []
 	for i in range(Nx * Ny):
 		for j in range(Nz):
-			unit_cell_params.append({"unit_cell_size": unit_cell_size,
-				"strut_radius": strut_radii[j],
-				"node_diameter": node_diameters[j],
-				"truncation": truncation})
+			if rule == 'linear':
+				unit_cell_params.append({"unit_cell_size": unit_cell_size,
+					"strut_radius": strut_radii[j],
+					"node_diameter": node_diameters[j],
+					"truncation": min_truncation})
+			if rule == 'linear_truncation':
+					unit_cell_params.append({"unit_cell_size": unit_cell_size,
+					"strut_radius": min_strut_radius,
+					"node_diameter": min_node_diameter,
+					"truncation": truncations[j]})
 	result = result.eachpointAdaptive(unit_cell,
 									  callback_extra_args = unit_cell_params,
 									  useLocalCoords = True)
