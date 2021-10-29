@@ -314,7 +314,6 @@ def tcubic_heterogeneous_lattice(unit_cell_size,
 		truncations = np.linspace(min_truncation,
 								max_truncation,
 								Nz)
-		print(truncations)
 	if rule == 'sin':
 		average = lambda num1, num2: (num1 + num2) / 2
 		strut_radii = np.sin(
