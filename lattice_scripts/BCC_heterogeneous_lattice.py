@@ -3,13 +3,13 @@ from parfunlib.topologies.bcc import bcc_heterogeneous_lattice
 # USER INPUT
 
 unit_cell_size = 10
-min_strut_diameter = 1
+min_strut_diameter = 0.1
 max_strut_diameter = 3
-min_node_diameter = 1.1
+min_node_diameter = 0.11
 max_node_diameter = 3.3
 Nx = 2
 Ny = 2
-Nz = 2
+Nz = 12
 
 # END USER INPUT
 
@@ -23,4 +23,4 @@ result = bcc_heterogeneous_lattice(unit_cell_size,
                                     min_node_diameter,
                                     max_node_diameter,
                                     Nx, Ny, Nz,
-                                    rule = 'sin')
+                                    rule = 'parabola')

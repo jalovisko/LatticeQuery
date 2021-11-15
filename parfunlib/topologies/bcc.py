@@ -295,6 +295,11 @@ def bcc_heterogeneous_lattice(unit_cell_size,
 			np.linspace(min_strut_radius, max_strut_radius, Nz)*12) + 2*average(min_strut_radius, max_strut_radius)
 		node_diameters = np.sin(
 			np.linspace(min_node_diameter, max_node_diameter, Nz)*12) + 2*average(min_node_diameter, max_node_diameter)
+	if rule == 'parabola':
+		frep = lambda x, x_max, y_min, y_max: - (y_max - y_min) * (-1+x/x_max) * (1+x/x_max) + y_max
+		strut_radii = frep(np.linspace(0, Nz, Nz), Nz, min_strut_radius, max_strut_radius)
+		print(strut_radii)
+		node_diameters = frep(np.linspace(0, Nz, Nz), Nz, min_node_diameter, max_node_diameter)
 	UC_pnts = []
 	for i in range(Nx):
 		for j in range(Ny):
