@@ -275,11 +275,12 @@ def bcc_heterogeneous_lattice(unit_cell_size,
 							  min_node_diameter,
 							  max_node_diameter,
 							  Nx, Ny, Nz,
-							  type = 'bcc',
-							  rule = 'linear'):
-	if type not in ['bcc', 'bccz', 'sbcc', 'sbccz']:
-		raise TypeError(f'The type \'{type}\' does not exist!')
-
+							  topology = 'bcc',
+							  rule = 'linear',
+							  position = (0, 0, 0),
+							  rotation = (0, 0, 0)):
+	if topology not in ['bcc', 'bccz', 'sbcc', 'sbccz']:
+		raise TypeError(f'The type \'{topology}\' does not exist!')
 	min_strut_radius = min_strut_diameter / 2.0
 	max_strut_radius = max_strut_diameter / 2.0
 	if rule == 'linear':
@@ -301,7 +302,9 @@ def bcc_heterogeneous_lattice(unit_cell_size,
 			for k in range(Nz):
 				UC_pnts.append((i * unit_cell_size, j * unit_cell_size, k * unit_cell_size))
 	print("Datapoints generated")
-	result = cq.Workplane().tag('base')
+	result = cq.Workplane().tag('base').transformed(
+		offset = cq.Vector(position[0], position[1], position[2]),
+		rotate = cq.Vector(rotation[0], rotation[1], rotation[2]))
 	result = result.pushPoints(UC_pnts)
 	unit_cell_params = []
 	for i in range(Nx * Ny):
@@ -309,7 +312,7 @@ def bcc_heterogeneous_lattice(unit_cell_size,
 			unit_cell_params.append({"unit_cell_size": unit_cell_size,
 				"strut_radius": strut_radii[j],
 				"node_diameter": node_diameters[j],
-				"type": type})
+				"type": topology})
 	result = result.eachpointAdaptive(unit_cell,
 									  callback_extra_args = unit_cell_params,
 									  useLocalCoords = True)
