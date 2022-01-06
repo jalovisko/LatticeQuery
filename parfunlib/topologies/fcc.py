@@ -14,7 +14,7 @@
 
 from ..commons import eachpointAdaptive
 
-from math import hypot, acos, degrees, hypot
+from math import hypot
 import numpy as np
 
 import cadquery as cq

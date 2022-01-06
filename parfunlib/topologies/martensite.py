@@ -1,23 +1,26 @@
-#import cadquery as cq
-from parfunlib.commons import eachpointAdaptive
-from parfunlib.topologies.fcc import unit_cell
-#from parfunlib.topologies.martensite import fcc_martensite
+##############################################################################
+# Copyright (C) 2021, Advanced Design and Manufacturing Lab (ADML). 
+# All rights reserved. 
+#
+# This software and its documentation and related materials are owned by 
+# ADML. The software may only be incorporated into application programs owned
+# by members of ADML. The structure and organization of this software are
+# the valuable trade secrets of ADML and its suppliers. The software is also 
+# protected by copyright law and international treaty provisions.
+#
+# By use of this software, its documentation or related materials, you 
+# acknowledge and accept the above terms.
+##############################################################################
 
-# USER INPUT
+from ..commons import eachpointAdaptive
+from .fcc import unit_cell
 
-unit_cell_size = 10
-strut_diameter = 1
-node_diameter = 1.1
-# Nx = 2
-Ny = 1
-Nz = 7
-uc_break = 3
+import numpy as np
 
-# END USER INPUT
+import cadquery as cq
 
 # Register our custom plugins before use.
 cq.Workplane.eachpointAdaptive = eachpointAdaptive
-cq.Workplane.unit_cell = unit_cell
 
 def fcc_martensite(unit_cell_size: float,
                     strut_diameter: float,
@@ -33,7 +36,7 @@ def fcc_martensite(unit_cell_size: float,
     for i in range(Nx):
         for j in range(Ny):
             for k in range(Nz):
-                if k - 1 < i:
+                if k < i:
                     UC_pnts.append(
                         (i * unit_cell_size,
                         j * unit_cell_size,
@@ -53,8 +56,3 @@ def fcc_martensite(unit_cell_size: float,
                                         useLocalCoords = True)
     print("The lattice is generated")
     return result
-
-result = fcc_martensite(unit_cell_size,
-                        strut_diameter,
-                        node_diameter,
-                        Ny, Nz, uc_break)
