@@ -3,10 +3,10 @@ import numpy as np
 
 unit_cell_size = 10
 strut_diameter = 1
-node_diameter = 2
-Nx = 5
-Ny = 3
-Nz = 4
+node_diameter = 1.1
+Nx = 1
+Ny = 1
+Nz = 1
 
 
 strut_radius = strut_diameter / 2.
@@ -257,3 +257,5 @@ cq.Workplane.BCC_lattice = BCC_lattice
 
 result = unit_cell(unit_cell_size, strut_radius)
 #result = BCC_lattice(unit_cell_size, strut_radius, Nx, Ny, Nz)
+
+fillet = cq.Workplane("XY").lineTo(10,0)

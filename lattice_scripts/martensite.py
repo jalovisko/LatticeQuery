@@ -13,8 +13,8 @@ strut_diameter = 1
 node_diameter = 1.1
 # Nx = 2
 Ny = 1
-Nz = 3
-uc_break = 2
+Nz = 8
+uc_break = 3
 
 # END USER INPUT
 
@@ -36,7 +36,7 @@ class martensite:
         self.node_diameter = node_diameter
         self.Ny = Ny
         self.Nz = Nz
-        self.uc_break = uc_break - 1
+        self.uc_break = uc_break
         if self.uc_break < 1:
             raise ValueError('The value of the beginning of the break should larger than 1')
 
