@@ -13,8 +13,8 @@ strut_diameter = 1
 node_diameter = 1.1
 # Nx = 2
 Ny = 1
-Nz = 7
-uc_break = 3
+Nz = 3
+uc_break = 2
 
 # END USER INPUT
 
@@ -36,7 +36,7 @@ class martensite:
         self.node_diameter = node_diameter
         self.Ny = Ny
         self.Nz = Nz
-        self.uc_break = uc_break
+        self.uc_break = uc_break - 1
         if self.uc_break < 1:
             raise ValueError('The value of the beginning of the break should larger than 1')
 
@@ -79,12 +79,8 @@ class martensite:
         """
         corner_points = self.unit_cell_size * np.array(
             [(0, 0),
-            (0, 0),
-            (1, 0),
             (1, 0),
             (1, 1),
-            (1, 1),
-            (0, 1),
             (0, 1)]
             )
         result = (
@@ -95,32 +91,16 @@ class martensite:
                 callback_extra_args = [
                     {"unit_cell_size": self.unit_cell_size,
                     "radius": self.strut_radius,
-                    "angle_x": - 45,
-                    "angle_y": 0},
-                    {"unit_cell_size": self.unit_cell_size,
-                    "radius": self.strut_radius,
                     "angle_x": 0,
                     "angle_y": 45},
-                    {"unit_cell_size": self.unit_cell_size,
+                    {"unit_cell_size": self.unit_cell_size * 0.5,
                     "radius": self.strut_radius,
                     "angle_x": 0,
                     "angle_y": - 45},
-                    {"unit_cell_size": self.unit_cell_size,
-                    "radius": self.strut_radius,
-                    "angle_x": - 45,
-                    "angle_y": 0},
-                    {"unit_cell_size": self.unit_cell_size,
-                    "radius": self.strut_radius,
-                    "angle_x": 45,
-                    "angle_y": 0},
-                    {"unit_cell_size": self.unit_cell_size,
+                    {"unit_cell_size": self.unit_cell_size * 0.5,
                     "radius": self.strut_radius,
                     "angle_x": 0,
                     "angle_y": - 45},
-                    {"unit_cell_size": self.unit_cell_size,
-                    "radius": self.strut_radius,
-                    "angle_x": 45,
-                    "angle_y": 0},
                     {"unit_cell_size": self.unit_cell_size,
                     "radius": self.strut_radius,
                     "angle_x": 0,
@@ -135,9 +115,7 @@ class martensite:
         result = cq.Workplane("XY")
         corner_points = self.unit_cell_size * np.array(
             [(0, 0, 0),
-            (1, 0, 0),
-            (1, 1, 1),
-            (0, 1, 1)]
+            (1, 0, 0)]
         )
         angle = 135.0
         hypot2D = hypot(self.unit_cell_size, self.unit_cell_size)
@@ -179,23 +157,23 @@ class martensite:
                         .fillet(node_radius)
                         )
                     )
-            result = (result
-                    .union(
-                        cq.Workplane()
-                        .transformed(offset = cq.Vector(point[0], point[1], unit_cell_size))
-                        .box(added_node_diameter, added_node_diameter, added_node_diameter)
-                        .edges("|Z")
-                        .fillet(node_radius)
-                        .edges("|X")
-                        .fillet(node_radius)
+            if point[0] == 1:
+                result = (result
+                        .union(
+                            cq.Workplane()
+                            .transformed(offset = cq.Vector(point[0], point[1], unit_cell_size))
+                            .box(added_node_diameter, added_node_diameter, added_node_diameter)
+                            .edges("|Z")
+                            .fillet(node_radius)
+                            .edges("|X")
+                            .fillet(node_radius)
+                            )
                         )
-                    )
         half_unit_cell_size = self.unit_cell_size / 2
         middle_points = self.unit_cell_size * np.array(
             [(0.5, 0),
             (1, 0.5),
-            (0.5, 1),
-            (0, 0.5)]
+            (0.5, 1)]
         )
         for point in middle_points:
             result = (result
@@ -220,7 +198,7 @@ class martensite:
 
     def __fcc_transition(self):
         UC_pnts = []
-        self.Nx = self.Nz + self.uc_break - 1
+        self.Nx = self.Nz + self.uc_break
         for i in range(self.Nx):
             for j in range(self.Ny):
                 for k in range(self.Nz):
