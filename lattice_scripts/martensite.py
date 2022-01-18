@@ -1,10 +1,9 @@
-#import cadquery as cq
 from parfunlib.commons import eachpointAdaptive
 from parfunlib.topologies.fcc import unit_cell as fcc_unit_cell
 from parfunlib.topologies.fcc import create_diagonal_strut
 from parfunlib.topologies.bcc import unit_cell as bcc_unit_cell
 
-from math import hypot
+from math import hypot, sqrt
 import numpy as np
 #from parfunlib.topologies.martensite import fcc_martensite
 
@@ -15,8 +14,8 @@ strut_diameter = 1
 node_diameter = 1.1
 # Nx = 2
 Ny = 1
-Nz = 3
-uc_break = 2
+Nz = 7
+uc_break = 3
 
 # END USER INPUT
 
@@ -33,12 +32,13 @@ class martensite:
                  Nz: int,
                  uc_break: int):
         self.unit_cell_size = unit_cell_size
+        self.bcc_unit_cell_size = 0.5 * sqrt(2) *unit_cell_size
         self.strut_diameter = strut_diameter
         self.strut_radius = 0.5 * strut_diameter
         self.node_diameter = node_diameter
         self.Ny = Ny
         self.Nz = Nz
-        self.uc_break = uc_break - 1
+        self.uc_break = uc_break
         if self.uc_break < 1:
             raise ValueError('The value of the beginning of the break should larger than 1')
 
@@ -235,14 +235,14 @@ class martensite:
     def __bcc_martensite(self):
         UC_pnts = []
         self.Nx = self.Nz + self.uc_break - 1
-        for i in range(1):
+        for i in range(2):
             for j in range(1):
                 for k in range(1):
                     if k - 1 < i:
                         UC_pnts.append(
-                            (i * self.unit_cell_size,
-                            j * self.unit_cell_size,
-                            k * self.unit_cell_size))
+                            (i * self.bcc_unit_cell_size,
+                            j * self.bcc_unit_cell_size,
+                            k * self.bcc_unit_cell_size))
         print("BCC datapoints generated")
         result = cq.Workplane().tag('base')
         result = result.transformed(offset = cq.Vector(0, 0, self.unit_cell_size))
@@ -251,7 +251,7 @@ class martensite:
         unit_cell_params = []
         for i in range(self.Nx * self.Ny):
             for j in range(self.Nz):
-                unit_cell_params.append({"unit_cell_size": self.unit_cell_size,
+                unit_cell_params.append({"unit_cell_size": self.bcc_unit_cell_size,
                     "strut_radius": self.strut_diameter * 0.5,
                     "node_diameter": self.node_diameter,
                     "type": 'fcc'})
