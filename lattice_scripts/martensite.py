@@ -1,6 +1,8 @@
 #import cadquery as cq
 from parfunlib.commons import eachpointAdaptive
-from parfunlib.topologies.fcc import unit_cell, create_diagonal_strut
+from parfunlib.topologies.fcc import unit_cell as fcc_unit_cell
+from parfunlib.topologies.fcc import create_diagonal_strut
+from parfunlib.topologies.bcc import unit_cell as bcc_unit_cell
 
 from math import hypot
 import numpy as np
@@ -20,7 +22,7 @@ uc_break = 2
 
 # Register our custom plugins before use.
 cq.Workplane.eachpointAdaptive = eachpointAdaptive
-cq.Workplane.unit_cell = unit_cell
+cq.Workplane.fcc_unit_cell = fcc_unit_cell
 
 class martensite:
     def __init__(self,
@@ -40,6 +42,10 @@ class martensite:
         if self.uc_break < 1:
             raise ValueError('The value of the beginning of the break should larger than 1')
 
+    ################################################################
+    # FCC
+    ################################################################
+    
     def __fcc_martensite(self):
         UC_pnts = []
         self.Nx = self.Nz + self.uc_break - 1
@@ -51,7 +57,7 @@ class martensite:
                             (i * self.unit_cell_size,
                             j * self.unit_cell_size,
                             k * self.unit_cell_size))
-        print("Datapoints generated")
+        print("FCC datapoints generated")
         result = cq.Workplane().tag('base')
         result = result.pushPoints(UC_pnts)
         unit_cell_params = []
@@ -61,8 +67,8 @@ class martensite:
                     "strut_radius": self.strut_diameter * 0.5,
                     "node_diameter": self.node_diameter,
                     "type": 'fcc'})
-        print("The lattice is generated")
-        result = result.eachpointAdaptive(unit_cell,
+        print("The FCC lattice section is generated")
+        result = result.eachpointAdaptive(fcc_unit_cell,
                                 callback_extra_args = unit_cell_params,
                                 useLocalCoords = True)
         return result
@@ -207,7 +213,7 @@ class martensite:
                             (i * self.unit_cell_size,
                             j * self.unit_cell_size,
                             k * self.unit_cell_size))
-        print("Datapoints generated")
+        print("FCC transition datapoints generated")
         result = cq.Workplane().tag('base')
         result = result.pushPoints(UC_pnts)
         unit_cell_params = []
@@ -217,15 +223,49 @@ class martensite:
                     "strut_radius": self.strut_diameter * 0.5,
                     "node_diameter": self.node_diameter,
                     "type": 'fcc'})
-        print("The lattice is generated")
+        print("The FCC transition lattice is generated")
         result = result.eachpointAdaptive(self.__fcc_transition_unit_cell,
                                             useLocalCoords = True)
         return result 
 
+    ################################################################
+    # BCC
+    ################################################################
+
+    def __bcc_martensite(self):
+        UC_pnts = []
+        self.Nx = self.Nz + self.uc_break - 1
+        for i in range(1):
+            for j in range(1):
+                for k in range(1):
+                    if k - 1 < i:
+                        UC_pnts.append(
+                            (i * self.unit_cell_size,
+                            j * self.unit_cell_size,
+                            k * self.unit_cell_size))
+        print("BCC datapoints generated")
+        result = cq.Workplane().tag('base')
+        result = result.transformed(offset = cq.Vector(0, 0, self.unit_cell_size))
+        result = result.transformed(rotate = cq.Vector(0, - 45, 0))
+        result = result.pushPoints(UC_pnts)
+        unit_cell_params = []
+        for i in range(self.Nx * self.Ny):
+            for j in range(self.Nz):
+                unit_cell_params.append({"unit_cell_size": self.unit_cell_size,
+                    "strut_radius": self.strut_diameter * 0.5,
+                    "node_diameter": self.node_diameter,
+                    "type": 'fcc'})
+        print("The BCC lattice section is generated")
+        result = result.eachpointAdaptive(bcc_unit_cell,
+                                callback_extra_args = unit_cell_params,
+                                useLocalCoords = True)
+        return result
 
     def build(self):
         result = cq.Workplane().tag('base')
-        result = result.union(self.__fcc_martensite()).union(self.__fcc_transition())
+        result = result.union(self.__fcc_martensite()
+                              .union(self.__fcc_transition())
+                              .union(self.__bcc_martensite()))
         return result
 
 lattice = martensite(unit_cell_size,
