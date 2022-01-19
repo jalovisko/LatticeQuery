@@ -14,8 +14,8 @@ strut_diameter = 1
 node_diameter = 1.1
 # Nx = 2
 Ny = 1
-Nz = 7
-uc_break = 3
+Nz = 3
+uc_break = 2
 
 # END USER INPUT
 
@@ -205,9 +205,9 @@ class martensite:
     def __fcc_transition(self):
         UC_pnts = []
         self.Nx = self.Nz + self.uc_break
-        for i in range(self.Nx):
+        for i in range(-1, self.Nx):
             for j in range(self.Ny):
-                for k in range(self.Nz):
+                for k in range(-1, self.Nz):
                     if k - 1 == i:
                         UC_pnts.append(
                             (i * self.unit_cell_size,
@@ -236,7 +236,7 @@ class martensite:
         UC_pnts = []
         self.Nx = self.Nz + self.uc_break - 1
         for i in range(2):
-            for j in range(1):
+            for j in range(2):
                 for k in range(1):
                     if k - 1 < i:
                         UC_pnts.append(
@@ -245,7 +245,7 @@ class martensite:
                             k * self.bcc_unit_cell_size))
         print("BCC datapoints generated")
         result = cq.Workplane().tag('base')
-        result = result.transformed(offset = cq.Vector(0, 0, self.unit_cell_size))
+        result = result.transformed(offset = cq.Vector(- self.unit_cell_size, 0, 0))
         result = result.transformed(rotate = cq.Vector(0, - 45, 0))
         result = result.pushPoints(UC_pnts)
         unit_cell_params = []
