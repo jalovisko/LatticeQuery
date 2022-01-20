@@ -235,10 +235,11 @@ class martensite:
     def __bcc_martensite(self):
         UC_pnts = []
         self.Nx = self.Nz + self.uc_break - 1
-        for i in range(2):
-            for j in range(2):
-                for k in range(1):
-                    if k - 1 < i:
+        for i in range(self.Nz * 2):
+            for j in range(self.Ny):
+                for k in range(self.Nz):
+                    print("X: "+str(i) + "; Z:" + str(k))
+                    if k - 1 < i and i != k and i < self.Nz * 2 - 1 -k:
                         UC_pnts.append(
                             (i * self.bcc_unit_cell_size,
                             j * self.bcc_unit_cell_size,
