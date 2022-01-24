@@ -260,9 +260,6 @@ cq.Workplane.create_nodes = create_nodes
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter, type):
 	result = cq.Workplane("XY")
 	result = result.union(bcc_diagonals(unit_cell_size, strut_radius))
-	#result = result.union(bcc_vertical_struts(unit_cell_size, strut_radius))
-	#result = result.union(bcc_bottom_horizontal_struts(unit_cell_size, strut_radius))
-	#result = result.union(bcc_top_horizontal_struts(unit_cell_size, strut_radius))
 	if type == 'bccz':
 		result = result.union(bcc_vertical_struts(unit_cell_size, strut_radius))
 	result = result.union(create_nodes(node_diameter, unit_cell_size))
