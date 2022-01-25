@@ -7,7 +7,7 @@ from parfunlib.topologies.fcc import unit_cell as fcc_unit_cell
 from parfunlib.topologies.fcc import create_diagonal_strut as create_fcc_diagonal_strut
 
 
-from math import acos, degrees, hypot, sqrt
+from math import acos, atan, degrees, hypot, sqrt
 import numpy as np
 #from parfunlib.topologies.martensite import fcc_martensite
 
@@ -17,8 +17,8 @@ unit_cell_size = 10
 strut_diameter = 1
 node_diameter = 1.1
 # Nx = 2
-Ny = 1
-Nz = 5
+Ny = 3
+Nz = 2
 uc_break = 1
 
 # END USER INPUT
@@ -246,13 +246,16 @@ class martensite:
             cq.occ_impl.shapes.Compound
                 a solid model of the strut
         """
-        # In a cube ABCDA1B1C1D1 this is the angle C1AD
-        angle_C1AD = 90 - degrees(acos(3**-.5))
-        corner_points = self.bcc_unit_cell_size * np.array(
+        # In a cuboid ABCDA1B1C1D1 this is the angle C1AD
+        #angle_C1AD = 90 - degrees(acos(2**-.5))
+        angle_C1AD = 90 - degrees(acos(0.5))
+        angle_CAD = 90 - degrees(acos(sqrt(2/3)))
+        pseudo_unit_cell_size = sqrt(2/3)*self.unit_cell_size
+        corner_points = np.array(
             [(0, 0),
-            (1, 0),
-            (1, 1),
-            (0, 1)]
+            (self.bcc_unit_cell_size, 0),
+            (self.bcc_unit_cell_size, self.unit_cell_size),
+            (0, self.unit_cell_size)]
         )
         result = (
             cq.Workplane("XY")
@@ -260,21 +263,21 @@ class martensite:
             .eachpointAdaptive(
                     create_bcc_diagonal_strut,
                     callback_extra_args = [
-                        {"unit_cell_size": self.bcc_unit_cell_size,
+                        {"unit_cell_size": pseudo_unit_cell_size,
                         "radius": self.strut_radius,
-                        "angle_x": - 45,
+                        "angle_x": - angle_CAD,
                         "angle_y": angle_C1AD},
-                        {"unit_cell_size": self.bcc_unit_cell_size,
+                        {"unit_cell_size": pseudo_unit_cell_size,
                         "radius": self.strut_radius,
-                        "angle_x": - 45,
+                        "angle_x": - angle_CAD,
                         "angle_y": - angle_C1AD},
-                        {"unit_cell_size": self.bcc_unit_cell_size,
+                        {"unit_cell_size": pseudo_unit_cell_size,
                         "radius": self.strut_radius,
-                        "angle_x": 45,
+                        "angle_x": angle_CAD,
                         "angle_y": - angle_C1AD},
-                        {"unit_cell_size": self.bcc_unit_cell_size,
+                        {"unit_cell_size": pseudo_unit_cell_size,
                         "radius": self.strut_radius,
-                        "angle_x": 45,
+                        "angle_x": angle_CAD,
                         "angle_y": angle_C1AD}
                         ],
                     useLocalCoords = True
@@ -288,11 +291,11 @@ class martensite:
         ):
         added_node_diameter = self.node_diameter + delta
         result = cq.Workplane("XY")
-        corner_points = self.bcc_unit_cell_size * np.array(
+        corner_points = np.array(
             [(0, 0),
-            (1, 0),
-            (1, 1),
-            (0, 1)]
+            (self.bcc_unit_cell_size, 0),
+            (self.bcc_unit_cell_size, self.unit_cell_size),
+            (0, self.unit_cell_size)]
         )
         for point in corner_points:
             result = (result
@@ -317,13 +320,12 @@ class martensite:
                         .fillet(self.node_radius)
                         )
                     )
-        half_unit_cell_size = 0.5 * self.bcc_unit_cell_size 
         result = (result
                 .union(
                     cq.Workplane()
-                    .transformed(offset = cq.Vector(half_unit_cell_size,
-                                                    half_unit_cell_size,
-                                                    half_unit_cell_size))
+                    .transformed(offset = cq.Vector(0.5 * self.bcc_unit_cell_size ,
+                                                    0.5 * self.unit_cell_size ,
+                                                    0.5 * self.bcc_unit_cell_size ))
                     .box(added_node_diameter, added_node_diameter, added_node_diameter)
                     .edges("|Z")
                     .fillet(self.node_radius)
@@ -348,8 +350,9 @@ class martensite:
                     if k - 1 < i and i != k and i < self.Nz * 2 - 1 -k:
                         UC_pnts.append(
                             (i * self.bcc_unit_cell_size,
-                            j * self.bcc_unit_cell_size,
+                            j * self.unit_cell_size,
                             k * self.bcc_unit_cell_size))
+        print(UC_pnts)
         print("BCC datapoints generated")
         result = cq.Workplane().tag('base')
         result = result.transformed(offset = cq.Vector(- self.unit_cell_size, 0, 0))
