@@ -1,6 +1,6 @@
 # An F-rep tool for geometric modeling of lattice structures
 
-The tool is based on the CadQuery GUI editor which in turn is based on PyQT and supports Linux, Windows and Mac.
+The tool is based on the [CadQuery GUI](https://github.com/CadQuery/CQ-editor.git) editor which in turn is based on PyQT and supports Linux, Windows and Mac.
 
 <img src="https://github.com/CadQuery/CQ-editor/raw/master/screenshots/screenshot2.png" alt="Screenshot" width="70%" >
 <img src="https://github.com/CadQuery/CQ-editor/raw/master/screenshots/screenshot3.png" alt="Screenshot" width="70%" >
