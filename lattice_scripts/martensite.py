@@ -178,6 +178,20 @@ class martensite:
                         .fillet(node_radius)
                         )
                     )
+        result = (result
+                    .union(
+                        cq.Workplane()
+                        .transformed(offset = cq.Vector(
+                            self.unit_cell_size,
+                            self.unit_cell_size * 0.5,
+                            self.unit_cell_size * 0.5))
+                        .box(added_node_diameter, added_node_diameter, added_node_diameter)
+                        .edges("|Z")
+                        .fillet(node_radius)
+                        .edges("|X")
+                        .fillet(node_radius)
+                        )
+                    )
         return result
 
     def __fcc_transition_unit_cell(self, location):
