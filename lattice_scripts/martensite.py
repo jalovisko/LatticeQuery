@@ -17,8 +17,8 @@ unit_cell_size = 10
 strut_diameter = 1
 node_diameter = 1.1
 # Nx = 2
-Ny = 3
-Nz = 2
+Ny = 1
+Nz = 7
 uc_break = 1
 
 # END USER INPUT
@@ -341,6 +341,59 @@ class martensite:
         result = result.union(self.__create_bcc_nodes())
         return result.val().located(location)
 
+    def __bcc_top_diagonals(self) -> cq.cq.Workplane:
+        """
+        Creates a solid model of the diagonals in a BCC unit cell.
+
+        Returns
+        -------
+            cq.occ_impl.shapes.Compound
+                a solid model of the strut
+        """
+        # In a cuboid ABCDA1B1C1D1 this is the angle C1AD
+        #angle_C1AD = 90 - degrees(acos(2**-.5))
+        angle_C1AD = 90 - degrees(acos(0.5))
+        angle_CAD = 90 - degrees(acos(sqrt(2/3)))
+        pseudo_unit_cell_size = sqrt(2/3)*self.unit_cell_size
+        corner_points = np.array(
+            [(0, 0),
+            (self.bcc_unit_cell_size, 0),
+            (self.bcc_unit_cell_size, self.unit_cell_size),
+            (0, self.unit_cell_size)]
+        )
+        result = (
+            cq.Workplane("XY")
+            .pushPoints(corner_points)
+            .eachpointAdaptive(
+                    create_bcc_diagonal_strut,
+                    callback_extra_args = [
+                        {"unit_cell_size": 0.5 * pseudo_unit_cell_size,
+                        "radius": self.strut_radius,
+                        "angle_x": - angle_CAD,
+                        "angle_y": angle_C1AD},
+                        {"unit_cell_size": pseudo_unit_cell_size,
+                        "radius": self.strut_radius,
+                        "angle_x": - angle_CAD,
+                        "angle_y": - angle_C1AD},
+                        {"unit_cell_size": pseudo_unit_cell_size,
+                        "radius": self.strut_radius,
+                        "angle_x": angle_CAD,
+                        "angle_y": - angle_C1AD},
+                        {"unit_cell_size": 0.5 * pseudo_unit_cell_size,
+                        "radius": self.strut_radius,
+                        "angle_x": angle_CAD,
+                        "angle_y": angle_C1AD}
+                        ],
+                    useLocalCoords = True
+                    )
+            )
+        return result
+    
+    def __bcc_edge(self, location):
+        result = cq.Workplane("XY")
+        result = result.union(self.__bcc_top_diagonals())
+        return result.val().located(location)
+    
     def __bcc_martensite(self):
         UC_pnts = []
         self.Nx = self.Nz + self.uc_break - 1
@@ -362,11 +415,29 @@ class martensite:
         for i in range(self.Nx * self.Ny):
             for j in range(self.Nz):
                 unit_cell_params.append({})
-        print("The BCC lattice section is generated")
         result = result.eachpointAdaptive(self.__bcc_unit_cell,
                                 callback_extra_args = unit_cell_params,
                                 useLocalCoords = True)
+        bcc_edge_uc_pnts = []
+        for i in range(self.Nz * 2):
+            for j in range(self.Ny):
+                for k in range(self.Nz):
+                    if k - 1 < i and i != k and i == self.Nz * 2 - 1 -k:
+                        bcc_edge_uc_pnts.append(
+                            (i * self.bcc_unit_cell_size,
+                            j * self.unit_cell_size,
+                            k * self.bcc_unit_cell_size))
+        bcc_edge = cq.Workplane().tag('base')
+        bcc_edge = result.transformed(offset = cq.Vector(- self.unit_cell_size, 0, 0))
+        bcc_edge = result.transformed(rotate = cq.Vector(0, - 45, 0))
+        bcc_edge = result.pushPoints(bcc_edge_uc_pnts)
+        bcc_edge = bcc_edge.eachpointAdaptive(self.__bcc_edge,
+                                callback_extra_args = unit_cell_params,
+                                useLocalCoords = True)
+        result = result.union(bcc_edge)
+        print("The BCC lattice section is generated")
         return result
+    
 
     ################################################################
     # Build
