@@ -13,13 +13,13 @@ import numpy as np
 
 # USER INPUT
 
-unit_cell_size = 10
+unit_cell_size = 6
 strut_diameter = 1
 node_diameter = 1.1
 # Nx = 2
 Ny = 1
-Nz = 7
-uc_break = 1
+Nz = 3
+uc_break = 0
 
 # END USER INPUT
 
@@ -91,6 +91,8 @@ class martensite:
         corner_points = self.unit_cell_size * np.array(
             [(0, 0),
             (1, 0),
+            (1, 0),
+            (1, 1),
             (1, 1),
             (0, 1)]
             )
@@ -108,6 +110,14 @@ class martensite:
                     "radius": self.strut_radius,
                     "angle_x": 0,
                     "angle_y": - 45},
+                    {"unit_cell_size": self.unit_cell_size,
+                    "radius": self.strut_radius,
+                    "angle_x": -45,
+                    "angle_y": 0},
+                    {"unit_cell_size": self.unit_cell_size,
+                    "radius": self.strut_radius,
+                    "angle_x": 45,
+                    "angle_y": 0},
                     {"unit_cell_size": self.unit_cell_size * 0.5,
                     "radius": self.strut_radius,
                     "angle_x": 0,
@@ -161,36 +171,6 @@ class martensite:
                     .union(
                         cq.Workplane()
                         .transformed(offset = cq.Vector(point[0], point[1], 0))
-                        .box(added_node_diameter, added_node_diameter, added_node_diameter)
-                        .edges("|Z")
-                        .fillet(node_radius)
-                        .edges("|X")
-                        .fillet(node_radius)
-                        )
-                    )
-            if point[0] == 1:
-                result = (result
-                        .union(
-                            cq.Workplane()
-                            .transformed(offset = cq.Vector(point[0], point[1], unit_cell_size))
-                            .box(added_node_diameter, added_node_diameter, added_node_diameter)
-                            .edges("|Z")
-                            .fillet(node_radius)
-                            .edges("|X")
-                            .fillet(node_radius)
-                            )
-                        )
-        half_unit_cell_size = self.unit_cell_size / 2
-        middle_points = self.unit_cell_size * np.array(
-            [(0.5, 0),
-            (1, 0.5),
-            (0.5, 1)]
-        )
-        for point in middle_points:
-            result = (result
-                    .union(
-                        cq.Workplane()
-                        .transformed(offset = cq.Vector(point[0], point[1], half_unit_cell_size))
                         .box(added_node_diameter, added_node_diameter, added_node_diameter)
                         .edges("|Z")
                         .fillet(node_radius)
@@ -389,9 +369,61 @@ class martensite:
             )
         return result
     
+    # Creates 4 nodes at the XY plane of each unit cell
+    def __create_bcc_top_nodes(self,
+        delta = 0.01 # a small coefficient is needed because CQ thinks that it cuts through emptiness
+        ):
+        added_node_diameter = self.node_diameter + delta
+        result = cq.Workplane("XY")
+        corner_points = np.array(
+            [(self.bcc_unit_cell_size, 0),
+            (self.bcc_unit_cell_size, self.unit_cell_size),
+            (0, self.unit_cell_size)]
+        )
+        for point in corner_points:
+            if point[0] == self.bcc_unit_cell_size:
+                result = (result
+                        .union(
+                            cq.Workplane()
+                            .transformed(offset = cq.Vector(point[0], point[1], 0))
+                            .box(added_node_diameter, added_node_diameter, added_node_diameter)
+                            .edges("|Z")
+                            .fillet(self.node_radius)
+                            .edges("|X")
+                            .fillet(self.node_radius)
+                            )
+                        )
+            if point[0] == 0:
+                result = (result
+                        .union(
+                            cq.Workplane()
+                            .transformed(offset = cq.Vector(point[0], point[1], self.bcc_unit_cell_size))
+                            .box(added_node_diameter, added_node_diameter, added_node_diameter)
+                            .edges("|Z")
+                            .fillet(self.node_radius)
+                            .edges("|X")
+                            .fillet(self.node_radius)
+                            )
+                        )
+        result = (result
+                .union(
+                    cq.Workplane()
+                    .transformed(offset = cq.Vector(0.5 * self.bcc_unit_cell_size ,
+                                                    0.5 * self.unit_cell_size ,
+                                                    0.5 * self.bcc_unit_cell_size ))
+                    .box(added_node_diameter, added_node_diameter, added_node_diameter)
+                    .edges("|Z")
+                    .fillet(self.node_radius)
+                    .edges("|X")
+                    .fillet(self.node_radius)
+                    )
+                )
+        return result
+    
     def __bcc_edge(self, location):
         result = cq.Workplane("XY")
         result = result.union(self.__bcc_top_diagonals())
+        result = result.union(self.__create_bcc_top_nodes())
         return result.val().located(location)
     
     def __bcc_martensite(self):
