@@ -12,7 +12,7 @@
 # acknowledge and accept the above terms.
 ##############################################################################
 
-from ..commons import eachpointAdaptive
+from ..commons import eachpointAdaptive, cylinder_tranformation
 
 from math import hypot
 import numpy as np
@@ -50,13 +50,9 @@ def create_diagonal_strut(
 			a solid model of the strut
 	"""
 	hypot2D = hypot(unit_cell_size, unit_cell_size)
-	result = (
-		cq.Workplane()
-		.transformed(rotate = cq.Vector(angle_x, angle_y, 0))
-		.circle(radius)
-		.extrude(hypot2D)
-	)
+	result = cylinder_tranformation(radius, hypot2D, cq.Vector(angle_x, angle_y, 0))
 	return result.val().located(location)
+
 
 def fcc_diagonals(unit_cell_size: np.float64,
 					strut_radius: np.float64) -> cq.cq.Workplane:
@@ -157,14 +153,10 @@ def fcc_vertical_struts(unit_cell_size: np.float64,
 		(0, 1)]
 	)
 	for point in corner_points:
-		result = (result
-				  .union(
-					  cq.Workplane()
-					  .transformed(offset = cq.Vector(point[0], point[1]))
-					  .circle(strut_radius)
-					  .extrude(unit_cell_size)
-					  )
-				  )
+		result = (result.union(
+			cylinder_tranformation(strut_radius, unit_cell_size,
+					transformation = cq.Vector(point[0], point[1])))
+					)
 	return result
 # Register our custom plugin before use.
 cq.Workplane.fcc_vertical_struts = fcc_vertical_struts
@@ -179,14 +171,11 @@ def fcc_bottom_horizontal_struts(unit_cell_size, strut_radius):
 		(0, 1)]
 	)
 	for point in corner_points:
-		result = (result
-				  .union(
-					  cq.Workplane()
-					  .transformed(offset = cq.Vector(point[0], point[1], 0),
-								   rotate = cq.Vector(90, angle, 0))
-					  .circle(strut_radius)
-					  .extrude(unit_cell_size)
-					  )
+		result = (result.union(
+					cylinder_tranformation(strut_radius, unit_cell_size,
+							cq.Vector(90, angle, 0),
+							cq.Vector(point[0], point[1], 0))
+							)
 				  )
 		angle += 90
 	return result
@@ -204,14 +193,11 @@ def fcc_horizontal_diagonal_struts(unit_cell_size, strut_radius):
 	angle = 135.0
 	hypot2D = hypot(unit_cell_size, unit_cell_size)
 	for point in corner_points:
-		result = (result
-				  .union(
-					  cq.Workplane()
-					  .transformed(offset = cq.Vector(point[0], point[1], point[2]),
-								   rotate = cq.Vector(90, angle, 0))
-					  .circle(strut_radius)
-					  .extrude(hypot2D)
-					  )
+		result = (result.union(
+					cylinder_tranformation(strut_radius, hypot2D,
+							cq.Vector(90, angle, 0),
+							cq.Vector(point[0], point[1], point[2]))
+							)
 				  )
 		angle += 90
 	return result
@@ -228,14 +214,11 @@ def fcc_top_horizontal_struts(unit_cell_size, strut_radius):
 		(0, 1)]
 	)
 	for point in corner_points:
-		result = (result
-				  .union(
-					  cq.Workplane()
-					  .transformed(offset = cq.Vector(point[0], point[1], unit_cell_size),
-								   rotate = cq.Vector(90, angle, 0))
-					  .circle(strut_radius)
-					  .extrude(unit_cell_size)
-					  )
+		result = (result.union(
+					cylinder_tranformation(strut_radius, unit_cell_size,
+							cq.Vector(90, angle, 0),
+							cq.Vector(point[0], point[1], unit_cell_size))
+							)
 				  )
 		angle += 90
 	return result
@@ -323,7 +306,8 @@ def fcc_heterogeneous_lattice(unit_cell_size,
 							  max_node_diameter,
 							  Nx, Ny, Nz,
 							  type = 'fcc',
-							  rule = 'linear'):
+							  rule = 'linear',
+							  c_section = 'circle'):
 	if type not in ['fcc', 'fccz', 'sfcc', 'sfccz']:
 		raise TypeError(f'The type \'{type}\' does not exist!')
 	min_strut_radius = min_strut_diameter / 2.0

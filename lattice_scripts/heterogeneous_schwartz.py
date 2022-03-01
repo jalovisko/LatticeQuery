@@ -9,9 +9,9 @@ cq.Workplane.schwartz_heterogeneous_lattice = schwartz_heterogeneous_lattice
 # BEGIN USER INPUT
 
 unit_cell_size = 10
-Nx = 4
-Ny = 4
-Nz = 10
+Nx = 1
+Ny = 1
+Nz = 20
 min_thickness = 0.1
 max_thickness = 4
 # END USER INPUT
@@ -19,5 +19,7 @@ max_thickness = 4
 #timing performance
 start_time = time.time()
 schwartz = schwartz_heterogeneous_lattice(unit_cell_size, min_thickness, max_thickness,
-                                      Nx, Ny, Nz)
+                                      Nx, Ny, Nz,
+                                      rule = 'sin'
+                                      )
 print('The excecution time is:  %s seconds'  % (time.time() - start_time))

@@ -1,17 +1,18 @@
 import cadquery as cq
+from parfunlib.commons import eachpointAdaptive
 from parfunlib.topologies.bcc import bcc_heterogeneous_lattice
 import time
 
 # USER INPUT
 
 unit_cell_size = 10
-min_strut_diameter = 0.1
+min_strut_diameter = 0.001
 max_strut_diameter = 3
-min_node_diameter = 0.055
-max_node_diameter = 3.15
-Nx = 4
-Ny = 4
-Nz = 12
+min_node_diameter = 0.00105
+max_node_diameter = 3.05
+Nx = 1
+Ny = 1
+Nz = 10
 
 # END USER INPUT
 

@@ -1,3 +1,17 @@
+##############################################################################
+# Copyright (C) 2022, Advanced Design and Manufacturing Lab (ADML). 
+# All rights reserved. 
+#
+# This software and its documentation and related materials are owned by 
+# ADML. The software may only be incorporated into application programs owned
+# by members of ADML. The structure and organization of this software are
+# the valuable trade secrets of ADML and its suppliers. The software is also 
+# protected by copyright law and international treaty provisions.
+#
+# By use of this software, its documentation or related materials, you 
+# acknowledge and accept the above terms.
+##############################################################################
+
 import cadquery as cq
 
 def eachpointAdaptive(
@@ -71,7 +85,27 @@ def eachpointAdaptive(
 # Register our custom plugin before use.
 cq.Workplane.eachpointAdaptive = eachpointAdaptive
 
+def cylinder_tranformation(radius, height,
+    rotation = cq.Vector(0, 0, 0),
+    transformation = cq.Vector(0, 0, 0)):
+    """
+    Create a cylinder with a
+    circular cross section, and a height
+    
+    :param radius: The radius of the cylinder
+    :param height: the height of the cylinder
+    :param rotation: a vector that defines the rotation of the cylinder around its center
+    :param transformation: a vector that represents the x, y, and z coordinates of the center of the
+    cylinder
+    :return: A cylinder with the specified parameters.
+    """
+    return (cq.Workplane()
+		.transformed(offset = transformation,
+                    rotate = rotation)
+		.circle(radius)
+		.extrude(height))
+
+# The unit_cell class is a class that contains a unit cell size
 class unit_cell():
     def __init__(self, unit_cell_size):
         self.unit_cell_size = unit_cell_size
-

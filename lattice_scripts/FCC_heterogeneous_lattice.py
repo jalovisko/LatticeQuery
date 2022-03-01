@@ -9,7 +9,7 @@ min_node_diameter = 1.1
 max_node_diameter = 1.1
 Nx = 1
 Ny = 1
-Nz = 1
+Nz = 4
 
 # END USER INPUT
 
@@ -22,7 +22,7 @@ result = fcc_heterogeneous_lattice(unit_cell_size,
                                     max_strut_diameter,
                                     min_node_diameter,
                                     max_node_diameter,
-                                    Nx, Ny, Nz,
-                                    type = 'sfccz'
+                                    Nx, Ny, Nz
+                                    #type = 'sfccz'
                                     #rule = 'sin'
                                     )

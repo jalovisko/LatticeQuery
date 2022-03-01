@@ -50,7 +50,10 @@ def schwartz_000(self, thickness, unit_cell_size):
 
     surface_points = [[0, 0, 0]]
     plate_4 = cq.Workplane("XY")
-    plate_4 = plate_4.interpPlate(edge_wire, surface_points, thickness)
+    plate_4 = plate_4.interpPlate(edge_wire, surface_points, 0.5 * thickness)
+    plate_4 = plate_4.union(
+        cq.Workplane("XY").interpPlate(edge_wire, surface_points, - 0.5 * thickness)
+    )
     return self.union(self.eachpoint(lambda loc: plate_4.val().located(loc), True))
 
 cq.Workplane.schwartz_000 = schwartz_000
@@ -122,7 +125,9 @@ def schwartz_heterogeneous_lattice(unit_cell_size,
     if rule == 'sin':
         average = lambda num1, num2: (num1 + num2) / 2
         x_data = np.linspace(0, Nz, num = Nz)
-        thicknesses = np.sin(x_data) + average(min_thickness, max_thickness)
+        print(x_data)
+        thicknesses = 0.5 * np.sin(x_data) * (max_thickness - min_thickness) + average(min_thickness, max_thickness)
+        print(thicknesses)
     UC_pnts = []
     for i in range(Nx):
         for j in range(Ny):
