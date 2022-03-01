@@ -9,7 +9,7 @@ min_node_diameter = 1.1
 max_node_diameter = 1.1
 Nx = 1
 Ny = 1
-Nz = 4
+Nz = 1
 
 # END USER INPUT
 

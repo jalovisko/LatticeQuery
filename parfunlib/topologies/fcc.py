@@ -12,7 +12,7 @@
 # acknowledge and accept the above terms.
 ##############################################################################
 
-from ..commons import eachpointAdaptive, cylinder_tranformation
+from ..commons import cuboid_tranformation, eachpointAdaptive, cylinder_tranformation
 
 from math import hypot
 import numpy as np
@@ -52,7 +52,6 @@ def create_diagonal_strut(
 	hypot2D = hypot(unit_cell_size, unit_cell_size)
 	result = cylinder_tranformation(radius, hypot2D, cq.Vector(angle_x, angle_y, 0))
 	return result.val().located(location)
-
 
 def fcc_diagonals(unit_cell_size: np.float64,
 					strut_radius: np.float64) -> cq.cq.Workplane:

@@ -105,6 +105,29 @@ def cylinder_tranformation(radius, height,
 		.circle(radius)
 		.extrude(height))
 
+def cuboid_tranformation(side, height, fillet,
+    rotation = cq.Vector(0, 0, 0),
+    transformation = cq.Vector(0, 0, 0)):
+    """
+    Create a cylinder with a
+    circular cross section, and a height
+    
+    :param radius: The radius of the cylinder
+    :param height: the height of the cylinder
+    :param rotation: a vector that defines the rotation of the cylinder around its center
+    :param transformation: a vector that represents the x, y, and z coordinates of the center of the
+    cylinder
+    :return: A cylinder with the specified parameters.
+    """
+    return (cq.Workplane("XY")
+		.transformed(offset = transformation,
+                    rotate = rotation)
+		.rect(side, side)
+        .extrude(height)
+        .edges().fillet(fillet)
+        )
+
+
 # The unit_cell class is a class that contains a unit cell size
 class unit_cell():
     def __init__(self, unit_cell_size):
