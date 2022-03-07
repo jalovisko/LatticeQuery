@@ -6,13 +6,13 @@ import time
 # USER INPUT
 
 unit_cell_size = 10
-min_strut_diameter = 0.001
-max_strut_diameter = 3
-min_node_diameter = 0.00105
-max_node_diameter = 3.05
-Nx = 1
+min_strut_diameter = 1
+max_strut_diameter = 6
+min_node_diameter = 1.1
+max_node_diameter = 6.6
+Nx = 6
 Ny = 1
-Nz = 10
+Nz = 20
 
 # END USER INPUT
 
