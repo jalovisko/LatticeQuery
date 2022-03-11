@@ -72,12 +72,12 @@ def schwartz_d_000(self, thickness, unit_cell_size):
     ]
     edge_wire = cq.Workplane().polyline(pts)
     surface_points = [[half_unit_cell * 0.5, half_unit_cell * 0.5, half_unit_cell * 0.5]]
-    plate_4 = cq.Workplane("XY")
-    plate_4 = plate_4.interpPlate(edge_wire, surface_points, 0.5 * thickness)
-    plate_4 = plate_4.union(
+    plate = cq.Workplane("XY")
+    plate = plate.interpPlate(edge_wire, surface_points, 0.5 * thickness)
+    plate = plate.union(
         cq.Workplane("XY").interpPlate(edge_wire, surface_points, - 0.5 * thickness)
     )
-    return self.union(self.eachpoint(lambda loc: plate_4.val().located(loc), True))
+    return self.union(self.eachpoint(lambda loc: plate.val().located(loc), True))
 
 cq.Workplane.schwartz_d_000 = schwartz_d_000
 
@@ -85,8 +85,8 @@ def p_unit_cell(location, thickness, unit_cell_size,
 				delta = 1e-8 # a small tolerance (1e-10 is too small)
 				):
     """
-    Create a unit cell of a Schwartian polyhedron by creating a unit cell of a
-    Schwartz polygon, then mirroring it in three directions
+    Create a unit cell of a Schwartian P surface by creating a unit cell of a
+    Schwartz P, then mirroring it in three directions
     
     :param location: the location of the object
     :param thickness: the thickness of the material
@@ -122,7 +122,40 @@ def p_unit_cell(location, thickness, unit_cell_size,
     result = result.union(s_top)
     return result.val().located(location)
 
-cq.Workplane.unit_cell = p_unit_cell
+cq.Workplane.p_unit_cell = p_unit_cell
+
+def d_unit_cell(location, thickness, unit_cell_size
+				):
+    """
+    Create a unit cell of a Schwartian D surface by creating a unit cell of a
+    Schwartz polygon, then mirroring it in three directions
+    
+    :param location: the location of the object
+    :param thickness: the thickness of the material
+    :param unit_cell_size: the size of the unit cell
+    :return: A CQ object.
+    """
+    half_unit_cell = 0.5 * unit_cell_size
+    # Octant 000
+    result = cq.Workplane().schwartz_d_000(thickness, unit_cell_size)
+    # Octant 110
+    result = result.union(cq.Workplane().transformed(
+        offset = cq.Vector(unit_cell_size, unit_cell_size, 0)).transformed(
+        rotate = cq.Vector(0, 0, 180))
+        .schwartz_d_000(thickness, unit_cell_size))
+    # Octant 101
+    result = result.union(cq.Workplane().transformed(
+        offset = cq.Vector(half_unit_cell, half_unit_cell, half_unit_cell)).transformed(
+        rotate = cq.Vector(0, 0, 270))
+        .schwartz_d_000(thickness, unit_cell_size))
+    # Octant 011
+    result = result.union(cq.Workplane().transformed(
+        offset = cq.Vector(half_unit_cell, half_unit_cell, half_unit_cell)).transformed(
+        rotate = cq.Vector(0, 0, 90))
+        .schwartz_d_000(thickness, unit_cell_size))
+    return result.val().located(location)
+
+cq.Workplane.d_unit_cell = d_unit_cell
 
 def schwartz_p_heterogeneous_lattice(unit_cell_size,
                                 min_thickness,
@@ -152,6 +185,39 @@ def schwartz_p_heterogeneous_lattice(unit_cell_size,
             unit_cell_params.append({"thickness": thicknesses[j],
                 "unit_cell_size": unit_cell_size})
     result = result.eachpointAdaptive(p_unit_cell,
+									  callback_extra_args = unit_cell_params,
+									  useLocalCoords = True)
+    return result
+
+
+def schwartz_d_heterogeneous_lattice(unit_cell_size,
+                                min_thickness,
+                                max_thickness,
+                                Nx, Ny, Nz,
+                                rule = 'linear'):
+    # Register the custrom plugin 
+    cq.Workplane.eachpointAdaptive = eachpointAdaptive
+    if rule == 'linear':
+        thicknesses = np.linspace(min_thickness, max_thickness, Nz)
+    if rule == 'sin':
+        average = lambda num1, num2: (num1 + num2) / 2
+        x_data = np.linspace(0, Nz, num = Nz)
+        print(x_data)
+        thicknesses = 0.5 * np.sin(x_data) * (max_thickness - min_thickness) + average(min_thickness, max_thickness)
+        print(thicknesses)
+    UC_pnts = []
+    for i in range(Nx):
+        for j in range(Ny):
+            for k in range(Nz):
+                UC_pnts.append((i * unit_cell_size, j * unit_cell_size, k * unit_cell_size))
+    result = cq.Workplane().tag('base')
+    result = result.pushPoints(UC_pnts)
+    unit_cell_params = []
+    for i in range(Nx * Ny):
+        for j in range(Nz):
+            unit_cell_params.append({"thickness": thicknesses[j],
+                "unit_cell_size": unit_cell_size})
+    result = result.eachpointAdaptive(d_unit_cell,
 									  callback_extra_args = unit_cell_params,
 									  useLocalCoords = True)
     return result
