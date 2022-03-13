@@ -3,10 +3,10 @@ from parfunlib.topologies.diamond import diamond_heterogeneous_lattice
 # USER INPUT
 
 unit_cell_size = 10
-min_strut_diameter = 2.5
-max_strut_diameter = 2.5
-min_node_diameter = 3.7
-max_node_diameter = 3.7
+min_strut_diameter = 1
+max_strut_diameter = 1
+min_node_diameter = 1.1
+max_node_diameter = 1.1
 Nx = 1
 Ny = 1
 Nz = 1
