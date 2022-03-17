@@ -12,7 +12,7 @@
 # acknowledge and accept the above terms.
 ##############################################################################
 
-from ..commons import cylinder_tranformation, eachpointAdaptive
+from ..commons import cylinder_by_two_points, eachpointAdaptive
 
 from math import hypot
 import numpy as np
@@ -26,16 +26,24 @@ def octagon(
 	unit_cell_size: float,
 	strut_radius: float
 	) -> cq.cq.Workplane:
-	octagon_height = (1 - 0.5 * truncation) * unit_cell_size
-	regular_octagon_side = octagon_height / (np.sqrt(2) + 1)
-	octagon = cylinder_tranformation(strut_radius,
-								regular_octagon_side,
-								transformation=cq.Vector(
-									0.5 * (unit_cell_size - octagon_height),
-									0,
-									0.5 * (unit_cell_size - octagon_height)
-								)
-								)
+	# The following coordinates are based on permutations
+	# of the TCO:
+	# https://en.wikipedia.org/wiki/Truncated_cuboctahedron#Cartesian_coordinates
+	truncation = 0.5 *unit_cell_size * np.sqrt(2) / (1 + 2 * np.sqrt(2))
+	octagon_height = unit_cell_size * (1 + np.sqrt(2)) / (1 + 2 * np.sqrt(2))
+	regular_octagon_side = unit_cell_size / (1 + 2 * np.sqrt(2))
+	# all edges:
+	octagon = cylinder_by_two_points(
+		(truncation, 0, truncation*2),
+		(truncation, 0, truncation*2 + regular_octagon_side),
+		strut_radius
+	)
+	octagon = octagon.union(cylinder_by_two_points(
+		(truncation, 0, truncation*2 + regular_octagon_side),
+		(2*truncation, 0, unit_cell_size - truncation),
+		strut_radius
+	))
+
 	return octagon
 
 def z_struts(
@@ -337,7 +345,7 @@ cq.Workplane.create_nodes = create_nodes
 
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter, truncation):
 	result = cq.Workplane("XY")
-	result = result.union(octagon(unit_cell_size, strut_radius, truncation))
+	result = result.union(octagon(unit_cell_size, strut_radius))
 	return result.val().located(location)
 cq.Workplane.unit_cell = unit_cell
 

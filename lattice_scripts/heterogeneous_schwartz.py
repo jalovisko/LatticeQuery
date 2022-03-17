@@ -12,7 +12,7 @@ unit_cell_size = 10
 Nx = 1
 Ny = 1
 Nz = 1
-min_thickness = 0.1
+min_thickness = 0.2
 max_thickness = 7
 # END USER INPUT
 

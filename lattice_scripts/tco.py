@@ -18,6 +18,7 @@ truncation = 0.5
 # Register our custom plugin before use.
 
 #result = unit_cell(unit_cell_size, strut_radius)
+
 result = tco_heterogeneous_lattice(unit_cell_size,
                                     min_strut_diameter, 
                                     max_strut_diameter,

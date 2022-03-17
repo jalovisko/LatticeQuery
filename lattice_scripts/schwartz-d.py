@@ -8,12 +8,12 @@ cq.Workplane.schwartz_d_heterogeneous_lattice = schwartz_d_heterogeneous_lattice
 
 # BEGIN USER INPUT
 
-unit_cell_size = 10
-Nx = 10
+unit_cell_size = 20
+Nx = 1
 Ny = 1
 Nz = 1
-min_thickness = 0.1
-max_thickness = 3
+min_thickness = 0.2
+max_thickness = 1
 # END USER INPUT
 
 #timing performance
