@@ -4,14 +4,14 @@ cq.Workplane.tco_heterogeneous_lattice = tco_heterogeneous_lattice
 # USER INPUT
 
 unit_cell_size = 10
-min_strut_diameter = 1
-max_strut_diameter = 1
+min_strut_diameter = 0.5
+max_strut_diameter = 0.5
 min_node_diameter = 1.1
 max_node_diameter = 1.1
 Nx = 1
 Ny = 1
 Nz = 1
-truncation = 0.4
+truncation = 0.5
 
 # END USER INPUT
 

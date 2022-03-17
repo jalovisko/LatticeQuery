@@ -12,9 +12,9 @@
 # acknowledge and accept the above terms.
 ##############################################################################
 
-from ..commons import eachpointAdaptive
+from ..commons import cylinder_tranformation, eachpointAdaptive
 
-from math import hypot, acos, degrees
+from math import hypot
 import numpy as np
 
 import cadquery as cq
@@ -24,10 +24,19 @@ cq.Workplane.eachpointAdaptive = eachpointAdaptive
 
 def octagon(
 	unit_cell_size: float,
-	strut_radius: float,
-	truncation: float
+	strut_radius: float
 	) -> cq.cq.Workplane:
-	
+	octagon_height = (1 - 0.5 * truncation) * unit_cell_size
+	regular_octagon_side = octagon_height / (np.sqrt(2) + 1)
+	octagon = cylinder_tranformation(strut_radius,
+								regular_octagon_side,
+								transformation=cq.Vector(
+									0.5 * (unit_cell_size - octagon_height),
+									0,
+									0.5 * (unit_cell_size - octagon_height)
+								)
+								)
+	return octagon
 
 def z_struts(
 		unit_cell_size: np.float64,
@@ -328,11 +337,7 @@ cq.Workplane.create_nodes = create_nodes
 
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter, truncation):
 	result = cq.Workplane("XY")
-	result = result.union(z_struts(unit_cell_size, strut_radius, truncation))
-	result = result.union(bottom_xy_struts(unit_cell_size, strut_radius, truncation))
-	result = result.union(top_xy_struts(unit_cell_size, strut_radius, truncation))
-	result = result.union(create_nodes(node_diameter, unit_cell_size, truncation))
-	result = result.union(t_struts(strut_radius, unit_cell_size, truncation))
+	result = result.union(octagon(unit_cell_size, strut_radius, truncation))
 	return result.val().located(location)
 cq.Workplane.unit_cell = unit_cell
 
