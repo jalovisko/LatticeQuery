@@ -12,6 +12,7 @@
 # acknowledge and accept the above terms.
 ##############################################################################
 
+from unittest import result
 from ..commons import cylinder_by_two_points, eachpointAdaptive
 
 from math import hypot
@@ -22,29 +23,62 @@ import cadquery as cq
 # Register our custom plugins before use.
 cq.Workplane.eachpointAdaptive = eachpointAdaptive
 
-def octagon(
+def octagon(self,
 	unit_cell_size: float,
 	strut_radius: float
 	) -> cq.cq.Workplane:
+	"""
+	It creates an octagon
+	
+	Args:
+	  unit_cell_size (float): float
+	  strut_radius (float): float
+	
+	Returns:
+	  A CQ object.
+	"""
 	# The following coordinates are based on permutations
 	# of the TCO:
 	# https://en.wikipedia.org/wiki/Truncated_cuboctahedron#Cartesian_coordinates
 	truncation = 0.5 *unit_cell_size * np.sqrt(2) / (1 + 2 * np.sqrt(2))
 	octagon_height = unit_cell_size * (1 + np.sqrt(2)) / (1 + 2 * np.sqrt(2))
 	regular_octagon_side = unit_cell_size / (1 + 2 * np.sqrt(2))
-	# all edges:
-	octagon = cylinder_by_two_points(
+	# Creating a list of vertices for the octagon.
+	vertices = [
 		(truncation, 0, truncation*2),
 		(truncation, 0, truncation*2 + regular_octagon_side),
-		strut_radius
-	)
-	octagon = octagon.union(cylinder_by_two_points(
-		(truncation, 0, truncation*2 + regular_octagon_side),
 		(2*truncation, 0, unit_cell_size - truncation),
-		strut_radius
-	))
+		(2*truncation + regular_octagon_side, 0, unit_cell_size - truncation),
+		(unit_cell_size - truncation, 0, truncation*2 + regular_octagon_side),
+		(unit_cell_size - truncation, 0, truncation*2),
+		(2*truncation + regular_octagon_side, 0, truncation),
+		(2*truncation, 0, truncation),
+	]
+	# all edges:
+	result = cq.Workplane()
+	for v in range(len(vertices)):
+		result = result.union(cylinder_by_two_points(
+			vertices[v],
+			# looping to the first point:
+			vertices[v + 1 if v + 1 != len(vertices) else 0],
+			strut_radius
+		))
+	return self.union(self.eachpoint(lambda loc: result.val().located(loc), True))
+cq.Workplane.octagon = octagon
 
-	return octagon
+def octagonal_faces(unit_cell_size: float,
+	strut_radius: float
+	) -> cq.cq.Workplane:
+	faces = cq.Workplane().octagon(unit_cell_size, strut_radius)
+	faces = faces.union(
+		cq.Workplane()
+		.transformed(
+        	offset = cq.Vector(unit_cell_size, 0, 0))
+		.transformed(
+        	rotate = cq.Vector(0, 0, 0))
+		.octagon(unit_cell_size, strut_radius)
+	)
+	return faces
 
 def z_struts(
 		unit_cell_size: np.float64,
@@ -345,7 +379,7 @@ cq.Workplane.create_nodes = create_nodes
 
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter, truncation):
 	result = cq.Workplane("XY")
-	result = result.union(octagon(unit_cell_size, strut_radius))
+	result = result.union(octagonal_faces(unit_cell_size, strut_radius))
 	return result.val().located(location)
 cq.Workplane.unit_cell = unit_cell
 

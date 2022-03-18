@@ -153,7 +153,20 @@ def cylinder_by_two_points(p1: tuple,
                             p2: tuple,
                             radius: float
                             ) -> cq.cq.Workplane:
-    path= cq.Workplane().moveTo(p1[0], p1[1]).spline([p1, p2])
+    """
+    Create a cylinder with a spline (which is in fact a line)
+    path and two circles as end caps
+    
+    Args:
+      p1 (tuple): tuple of the form (x, y, z)
+      p2 (tuple): tuple of the form (x, y, z)
+      radius (float): radius of the cylinder
+    
+    Returns:
+      A CQ object.
+    """
+
+    path = cq.Workplane().moveTo(p1[0], p1[1]).spline([p1, p2])
 
     sweep = (cq.Workplane("XY")
         .pushPoints([path.val().locationAt(0)]).circle(radius)
