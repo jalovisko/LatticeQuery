@@ -75,7 +75,7 @@ def octagonal_faces(unit_cell_size: float,
 		.transformed(
         	offset = cq.Vector(unit_cell_size, 0, 0))
 		.transformed(
-        	rotate = cq.Vector(0, 0, 0))
+        	rotate = cq.Vector(0, 0, 90))
 		.octagon(unit_cell_size, strut_radius)
 	)
 	return faces
