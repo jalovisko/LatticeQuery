@@ -41,7 +41,6 @@ def octagon(self,
 	# of the TCO:
 	# https://en.wikipedia.org/wiki/Truncated_cuboctahedron#Cartesian_coordinates
 	truncation = 0.5 *unit_cell_size * np.sqrt(2) / (1 + 2 * np.sqrt(2))
-	octagon_height = unit_cell_size * (1 + np.sqrt(2)) / (1 + 2 * np.sqrt(2))
 	regular_octagon_side = unit_cell_size / (1 + 2 * np.sqrt(2))
 	# Creating a list of vertices for the octagon.
 	vertices = [
@@ -118,6 +117,23 @@ def octagonal_faces(unit_cell_size: float,
 		.octagon(unit_cell_size, strut_radius)
 	)
 	return faces
+
+def square_edges(self,
+		unit_cell_size: float,
+		strut_radius: float
+		) -> cq.cq.Workplane:
+	truncation = 0.5 *unit_cell_size * np.sqrt(2) / (1 + 2 * np.sqrt(2))
+	regular_octagon_side = unit_cell_size / (1 + 2 * np.sqrt(2))
+	# Creating a list of vertices for the octagon.
+	result = cq.Workplane()
+	result = result.union(cylinder_by_two_points(
+			(2*truncation, truncation, 0),
+			# looping to the first point:
+			(2*truncation, 0, truncation),
+			strut_radius
+		))
+	return self.union(self.eachpoint(lambda loc: result.val().located(loc), True))
+cq.Workplane.square_edges = square_edges
 
 def z_struts(
 		unit_cell_size: np.float64,
