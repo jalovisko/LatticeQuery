@@ -69,6 +69,19 @@ cq.Workplane.octagon = octagon
 def octagonal_faces(unit_cell_size: float,
 	strut_radius: float
 	) -> cq.cq.Workplane:
+	"""
+	Create a octagonal face, then union it with octagonal faces rotated by 90 degrees,
+	offset by the unit cell size in the x and y directions, and then offset by the unit cell size
+	in the z direction
+	
+	Args:
+	  unit_cell_size (float): The size of the unit cell.
+	  strut_radius (float): The radius of the strut.
+	
+	Returns:
+	  A CQ object.
+	"""
+
 	faces = cq.Workplane().octagon(unit_cell_size, strut_radius)
 	faces = faces.union(
 		cq.Workplane()
