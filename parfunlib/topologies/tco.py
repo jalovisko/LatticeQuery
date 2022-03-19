@@ -73,9 +73,35 @@ def octagonal_faces(unit_cell_size: float,
 	faces = faces.union(
 		cq.Workplane()
 		.transformed(
+        	rotate = cq.Vector(0, 0, 90))
+		.octagon(unit_cell_size, strut_radius)
+	)
+	faces = faces.union(
+		cq.Workplane()
+		.transformed(
         	offset = cq.Vector(unit_cell_size, 0, 0))
 		.transformed(
         	rotate = cq.Vector(0, 0, 90))
+		.octagon(unit_cell_size, strut_radius)
+	)
+	faces = faces.union(
+		cq.Workplane()
+		.transformed(
+        	offset = cq.Vector(0, unit_cell_size, 0))
+		.octagon(unit_cell_size, strut_radius)
+	)
+	faces = faces.union(
+		cq.Workplane()
+		.transformed(
+        	rotate = cq.Vector(-90, 0, 0))
+		.octagon(unit_cell_size, strut_radius)
+	)
+	faces = faces.union(
+		cq.Workplane()
+		.transformed(
+        	offset = cq.Vector(0, 0, unit_cell_size))
+		.transformed(
+        	rotate = cq.Vector(-90, 0, 0))
 		.octagon(unit_cell_size, strut_radius)
 	)
 	return faces
