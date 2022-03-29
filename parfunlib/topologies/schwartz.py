@@ -173,6 +173,7 @@ def schwartz_p_heterogeneous_lattice(unit_cell_size,
         thicknesses = 0.5 * np.sin(x_data) * (max_thickness - min_thickness) + average(min_thickness, max_thickness)
         print(thicknesses)
     UC_pnts = []
+    unit_cell_size = 0.5 * unit_cell_size # bacause it's made of 8 mirrored features
     for i in range(Nx):
         for j in range(Ny):
             for k in range(Nz):

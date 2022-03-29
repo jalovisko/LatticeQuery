@@ -203,6 +203,7 @@ def gyroid_heterogeneous_lattice(unit_cell_size: float,
     cq.Workplane.eachpointAdaptive = eachpointAdaptive
     thicknesses = np.linspace(min_thickness, max_thickness, Nz)
     UC_pnts = []
+    unit_cell_size = 0.5 * unit_cell_size # because unit cell is made of 8 mirrored features
     for i in range(Nx):
         for j in range(Ny):
             for k in range(Nz):
