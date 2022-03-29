@@ -1,10 +1,6 @@
 # An F-rep tool for geometric modeling of lattice structures
 
-The tool is based on the [CadQuery GUI](https://github.com/CadQuery/CQ-editor.git) editor which in turn is based on PyQT and OpenCASCADE and supports Linux, Windows and Mac.
-
-<img src="https://github.com/CadQuery/CQ-editor/raw/master/screenshots/screenshot2.png" alt="Screenshot" width="70%" >
-<img src="https://github.com/CadQuery/CQ-editor/raw/master/screenshots/screenshot3.png" alt="Screenshot" width="70%" >
-<img src="https://github.com/CadQuery/CQ-editor/raw/master/screenshots/screenshot4.png" alt="Screenshot" width="70%" >
+The tool is based on the [CadQuery GUI](https://github.com/CadQuery/CQ-editor.git) editor which in turn is based on PyQT and OpenCASCADE and supports Linux, Windows and MacOS.
 
 ## Usage
 Most of the functionality is located in the `parfunlib` folder (stands for 'parametric function library').
@@ -60,6 +56,10 @@ Sometimes the modeling would fail with an error like `Brep: command not done`. T
 # CadQuery
 
 This section is an intoduction to CadQuery - the library we used to implement our tool. This is relevant only if you intend to contribute to this repository.
+
+<img src="https://github.com/CadQuery/CQ-editor/raw/master/screenshots/screenshot2.png" alt="Screenshot" width="70%" >
+<img src="https://github.com/CadQuery/CQ-editor/raw/master/screenshots/screenshot3.png" alt="Screenshot" width="70%" >
+<img src="https://github.com/CadQuery/CQ-editor/raw/master/screenshots/screenshot4.png" alt="Screenshot" width="70%" >
 
 ## Notable features
 
