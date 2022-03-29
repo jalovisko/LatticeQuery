@@ -54,6 +54,9 @@ As you can see, a single function handles requires geometric arguments and handl
 
 The `lattce_scripts` directory includes a few more examples.
 
+## Known issues
+Sometimes the modeling would fail with an error like `Brep: command not done`. This is often solved by passing a float argument to the function rather than an integer one. You can also try to increase the unit cell size, let's say, 10 times, and then scale it down 10 times.
+
 # CadQuery
 
 This section is an intoduction to CadQuery - the library we used to implement our tool. This is relevant only if you intend to contribute to this repository.
