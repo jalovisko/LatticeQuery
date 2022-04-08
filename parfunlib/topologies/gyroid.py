@@ -62,7 +62,10 @@ def gyroid_000(self, thickness: float, unit_cell_size: float
     surface_points = [[0, 0, 0]]
     plate_4 = cq.Workplane("XY")
     # `interpPlate` is a function that interpolates a surface from a wire.
-    plate_4 = plate_4.interpPlate(edge_wire, surface_points, thickness)
+    plate_4 = plate_4.interpPlate(edge_wire, surface_points, thickness * 0.5)
+    plate_4 = plate_4.union(
+        cq.Workplane("XY").interpPlate(edge_wire, surface_points, - 0.5 * thickness)
+    )
     return self.union(self.eachpoint(lambda loc: plate_4.val().located(loc), True))
 cq.Workplane.gyroid_000 = gyroid_000
 
@@ -201,7 +204,8 @@ def gyroid_heterogeneous_lattice(unit_cell_size: float,
         raise ValueError(f'Direction {direction} does not exist. The acceptable directions are {coordinates_3d}')
     # Register the custrom plugin 
     cq.Workplane.eachpointAdaptive = eachpointAdaptive
-    thicknesses = np.linspace(min_thickness, max_thickness, Nz)
+    ns = {'x': Nx,'y': Ny, 'z': Nz}
+    thicknesses = np.linspace(min_thickness, max_thickness, ns[direction])
     UC_pnts = []
     unit_cell_size = 0.5 * unit_cell_size # because unit cell is made of 8 mirrored features
     for i in range(Nx):
