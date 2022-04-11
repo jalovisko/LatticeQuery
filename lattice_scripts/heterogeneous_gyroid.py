@@ -6,12 +6,12 @@ cq.Workplane.gyroid_heterogeneous_lattice = gyroid_heterogeneous_lattice
 
 # BEGIN USER INPUT
 
-min_thickness = 0.3104 * 2
-max_thickness = 0.3104 * 2
-unit_cell_size = 5 * 2
-Nx = 5
-Ny = 5
-Nz = 5
+min_thickness = 10
+max_thickness = 10
+unit_cell_size = 100
+Nx = 1
+Ny = 1
+Nz = 1
 
 # END USER INPUT
 

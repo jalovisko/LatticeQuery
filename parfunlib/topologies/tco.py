@@ -13,7 +13,7 @@
 ##############################################################################
 
 from unittest import result
-from ..commons import cylinder_by_two_points, eachpointAdaptive
+from ..commons import cylinder_by_two_points, eachpointAdaptive, make_sphere
 
 from math import hypot
 import numpy as np
@@ -218,71 +218,91 @@ def square_faces(unit_cell_size: float,
 	return faces
 
 # Creates 4 nodes at the XY plane of each unit cell
-def create_nodes(node_diameter: float,
+def create_nodes(self, node_diameter: float,
 				unit_cell_size: float,
-				truncation: float,
 				delta = 0.01 # a small coefficient is needed because CQ thinks that it cuts through emptiness
-				):
-	added_node_diameter = node_diameter + delta
+				) -> cq.cq.Workplane:
 	node_radius = node_diameter / 2.0
-	result = cq.Workplane("XY")
-	corner_points = unit_cell_size * np.array(
-		[(0, 0),
-		(1, 0),
-		(1, 1),
-		(0, 1)]
-	)
-	truncation_delta = truncation * unit_cell_size / 2
-	t_nodes = [
-		[[truncation_delta, 0, truncation_delta],
-		[0, truncation_delta, truncation_delta],
-		[truncation_delta, truncation_delta, 0]],
-		[[-truncation_delta, 0, truncation_delta],
-		[0, truncation_delta, truncation_delta],
-		[- truncation_delta, truncation_delta, 0]],
-		[[- truncation_delta, 0, truncation_delta],
-		[0, -truncation_delta, truncation_delta],
-		[- truncation_delta, - truncation_delta, 0]],
-		[[truncation_delta, 0, truncation_delta],
-		[0, - truncation_delta, truncation_delta],
-		[truncation_delta, - truncation_delta, 0]]
+	# The following coordinates are based on permutations
+	# of the TCO:
+	# https://en.wikipedia.org/wiki/Truncated_cuboctahedron#Cartesian_coordinates
+	truncation = 0.5 *unit_cell_size * np.sqrt(2) / (1 + 2 * np.sqrt(2))
+	regular_octagon_side = unit_cell_size / (1 + 2 * np.sqrt(2))
+	# Creating a list of vertices for the octagon.
+	vertices = [
+		(truncation, 0, truncation*2),
+		(truncation, 0, truncation*2 + regular_octagon_side),
+		(2*truncation, 0, unit_cell_size - truncation),
+		(2*truncation + regular_octagon_side, 0, unit_cell_size - truncation),
+		(unit_cell_size - truncation, 0, truncation*2 + regular_octagon_side),
+		(unit_cell_size - truncation, 0, truncation*2),
+		(2*truncation + regular_octagon_side, 0, truncation),
+		(2*truncation, 0, truncation),
 	]
-	
-	for idp, point in enumerate(corner_points):
-		for t_node in t_nodes[idp]:
-			result = (result
-					.union(
-						cq.Workplane()
-						.transformed(offset = cq.Vector(point[0] + t_node[0],
-															point[1] + t_node[1],
-															t_node[2]))
-						.box(added_node_diameter, added_node_diameter, added_node_diameter)
-						.edges("|Z")
-						.fillet(node_radius)
-						.edges("|X")
-						.fillet(node_radius)
-						)
-					)
-			result = (result
-					.union(
-						cq.Workplane()
-						.transformed(offset = cq.Vector(point[0] + t_node[0],
-															point[1] + t_node[1],
-															unit_cell_size - t_node[2]))
-						.box(added_node_diameter, added_node_diameter, added_node_diameter)
-						.edges("|Z")
-						.fillet(node_radius)
-						.edges("|X")
-						.fillet(node_radius)
-						)
-					)
-	return result
+	# all edges:
+	result = cq.Workplane()
+	for v in vertices:
+		result = result.union(make_sphere(cq.Vector(v), node_radius))
+	return self.union(self.eachpoint(lambda loc: result.val().located(loc), True))
 cq.Workplane.create_nodes = create_nodes
+
+def nodes_faces(node_diameter: float,
+				unit_cell_size: float
+	) -> cq.cq.Workplane:
+	"""
+	Create a nodes on the octagonal face, then union them rotated by 90 degrees,
+	offset by the unit cell size in the x and y directions, and then offset by the unit cell size
+	in the z direction
+	
+	Args:
+	  unit_cell_size (float): The size of the unit cell.
+	  node_diameter (float): The diameter of the node.
+	
+	Returns:
+	  A CQ object.
+	"""
+	faces = cq.Workplane().create_nodes(node_diameter, unit_cell_size)
+	faces = faces.union(
+		cq.Workplane()
+		.transformed(
+        	rotate = cq.Vector(0, 0, 90))
+		.create_nodes(node_diameter, unit_cell_size)
+	)
+	faces = faces.union(
+		cq.Workplane()
+		.transformed(
+        	offset = cq.Vector(unit_cell_size, 0, 0))
+		.transformed(
+        	rotate = cq.Vector(0, 0, 90))
+		.create_nodes(node_diameter, unit_cell_size)
+	)
+	faces = faces.union(
+		cq.Workplane()
+		.transformed(
+        	offset = cq.Vector(0, unit_cell_size, 0))
+		.create_nodes(node_diameter, unit_cell_size)
+	)
+	faces = faces.union(
+		cq.Workplane()
+		.transformed(
+        	rotate = cq.Vector(-90, 0, 0))
+		.create_nodes(node_diameter, unit_cell_size)
+	)
+	faces = faces.union(
+		cq.Workplane()
+		.transformed(
+        	offset = cq.Vector(0, 0, unit_cell_size))
+		.transformed(
+        	rotate = cq.Vector(-90, 0, 0))
+		.create_nodes(node_diameter, unit_cell_size)
+	)
+	return faces
 
 def unit_cell(location, unit_cell_size, strut_radius, node_diameter):
 	result = cq.Workplane("XY")
 	result = result.union(octagonal_faces(unit_cell_size, strut_radius))
 	result = result.union(square_faces(unit_cell_size, strut_radius))
+	result = result.union(nodes_faces(node_diameter, unit_cell_size, ))
 	return result.val().located(location)
 cq.Workplane.unit_cell = unit_cell
 

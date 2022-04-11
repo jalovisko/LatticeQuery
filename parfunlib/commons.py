@@ -176,6 +176,23 @@ def cylinder_by_two_points(p1: tuple,
         )
     return sweep
 
+def make_sphere(center: cq.Vector, radius: float) -> cq.cq.Workplane:
+    """
+    It creates a sphere centered at `center` with radius `radius`
+    
+    Args:
+      center (cq.Vector): The center of the sphere.
+      radius (float): the radius of the sphere
+    
+    Returns:
+      A cq.cq.Workplane object
+    """
+    center = center - cq.Vector(0, radius, 0)
+    wire = cq.Workplane('XY').transformed(offset = center)
+    wire = wire.threePointArc((radius, radius), (0.0, 2.0 * radius)).close()
+    sphere = wire.revolve()
+    return sphere
+
 # The unit_cell class is a class that contains a unit cell size
 class unit_cell():
     def __init__(self, unit_cell_size):

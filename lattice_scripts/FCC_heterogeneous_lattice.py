@@ -5,8 +5,8 @@ from parfunlib.topologies.fcc import fcc_heterogeneous_lattice
 unit_cell_size = 10
 min_strut_diameter = 1
 max_strut_diameter = 1
-min_node_diameter = 1.1
-max_node_diameter = 1.1
+min_node_diameter = 1.0
+max_node_diameter = 1.0
 Nx = 1
 Ny = 1
 Nz = 1
@@ -22,7 +22,7 @@ result = fcc_heterogeneous_lattice(unit_cell_size,
                                     max_strut_diameter,
                                     min_node_diameter,
                                     max_node_diameter,
-                                    Nx, Ny, Nz
-                                    #type = 'sfccz'
+                                    Nx, Ny, Nz,
+                                    type = 'fcc'
                                     #rule = 'sin'
                                     )

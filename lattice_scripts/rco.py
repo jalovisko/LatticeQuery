@@ -11,7 +11,7 @@ max_node_diameter = 1.1
 Nx = 1
 Ny = 1
 Nz = 1
-truncation = 0.4
+truncation = 0.5
 
 # END USER INPUT
 
