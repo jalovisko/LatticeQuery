@@ -5,13 +5,13 @@ from parfunlib.topologies.tcubic import tcubic_heterogeneous_lattice
 unit_cell_size = 10
 min_strut_diameter = 1
 max_strut_diameter = 1
-min_node_diameter = 1.
-max_node_diameter = 1.
-Nx = 1
+min_node_diameter = 1.05
+max_node_diameter = 1.05
+Nx = 10
 Ny = 1
-Nz = 1
-min_truncation = 0.9999
-max_truncation = 0.9999
+Nz = 10
+min_truncation = 0.001
+max_truncation = 0.999
 # END USER INPUT
 
 # Register our custom plugin before use.

@@ -7,11 +7,11 @@ min_strut_diameter = 1
 max_strut_diameter = 3
 min_node_diameter = 1.1
 max_node_diameter = 3.3
-Nx = 2
-Ny = 2
+Nx = 1
+Ny = 1
 Nz = 10
-min_truncation = 0.01
-max_truncation = 0.99
+min_truncation = 0.0000001
+max_truncation = 0.9999999
 # END USER INPUT
 
 # Register our custom plugin before use.
