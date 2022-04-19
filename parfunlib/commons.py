@@ -197,3 +197,21 @@ def make_sphere(center: cq.Vector, radius: float) -> cq.cq.Workplane:
 class unit_cell():
     def __init__(self, unit_cell_size):
         self.unit_cell_size = unit_cell_size
+
+
+def make_support_plate(
+        Nx: int,
+        Ny: int,
+        Nz: int,
+        unit_cell_size: float,
+        thickness: float,
+        margin: float
+    ) -> cq.cq.Workplane:
+    side_x = Nx * unit_cell_size + 2 * margin
+    side_y = Ny * unit_cell_size + 2 * margin
+    result = cq.Workplane().transformed(
+        offset = (0.5 * side_x - margin,
+        0.5 * side_y - margin,
+        -0.5 * thickness))
+    result = result.box(side_x, side_y, thickness)
+    return result
