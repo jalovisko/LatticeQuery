@@ -73,8 +73,7 @@ def gyroid_half_x(thickness: float,
 cq.Workplane.gyroid_half_x = gyroid_half_x
 
 def p_half(thickness: float,
-    unit_cell_size: float,
-    delta = 1e-8 # a small tolerance (1e-10 is too small)
+    unit_cell_size: float
     ):
     """
     Create a unit cell of a Schwartian P surface by creating a unit cell of a
