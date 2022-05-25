@@ -1,4 +1,6 @@
 import cadquery as cq
+
+import numpy as np
 from .gyroid import gyroid_000
 from .schwartz import schwartz_p_000
 
@@ -72,9 +74,10 @@ def gyroid_half_x(thickness: float,
     return result
 cq.Workplane.gyroid_half_x = gyroid_half_x
 
-def p_half(thickness: float,
+def p_half(self,
+    thickness: float,
     unit_cell_size: float
-    ):
+    ) -> cq.cq.Workplane:
     """
     Create a unit cell of a Schwartian P surface by creating a unit cell of a
     Schwartz P, then mirroring it in three directions
@@ -82,7 +85,6 @@ def p_half(thickness: float,
     :param location: the location of the object
     :param thickness: the thickness of the material
     :param unit_cell_size: the size of the unit cell
-    :param delta: a small tolerance (1e-10 is too small)
     :return: A CQ object.
     """
     result = cq.Workplane("XY")
@@ -105,13 +107,31 @@ def p_half(thickness: float,
     #s_110 = mirXZ_pos.translate((unit_cell_size, 0, 0))
     result = result.union(s_110)
     # Octante 010
-    s_010 = s_000.mirror(mirrorPlane = "XZ",
-                            basePointVector = (0, unit_cell_size, 0))
+    #s_010 = s_000.mirror(mirrorPlane = "XZ",
+    #                        basePointVector = (0, unit_cell_size, 0))
     #result = result.union(s_010)
     # The top side is just a mirror of the bottom one
     s_top = result.mirror(mirrorPlane = "XY",
                             basePointVector = (0, 0, unit_cell_size))
     result = result.union(s_top)
-    return result
+    return self.union(self.eachpoint(lambda loc: result.val().located(loc), True))
 
 cq.Workplane.p_half = p_half
+
+def transition(self,
+    thickness: float,
+    unit_cell_size: float
+    ) -> cq.cq.Workplane:
+    edge_points = [
+      [
+        [0, 0, 0.5],
+        [0, 0.25, 0.375],
+        [0, 0.5, 0.5]
+      ]
+    ]
+    edge_points = np.array(edge_points) * unit_cell_size
+    edge_wire = cq.Edge.makeSpline(
+      cq.Vector(edge_points[0][0], edge_points[0][1], edge_points[0][2])
+    )
+    return self.union(self.eachpoint(lambda loc: edge_wire.val().located(loc), True))
+cq.Workplane.transition = transition
