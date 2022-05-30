@@ -1,6 +1,7 @@
 import cadquery as cq
 
-import numpy as np
+from math import sqrt
+
 from .gyroid import gyroid_000
 from .schwartz import schwartz_p_000
 
@@ -122,6 +123,7 @@ def transition(self,
     thickness: float,
     unit_cell_size: float
     ) -> cq.cq.Workplane:
+    """
     edge_points = [
       [
         [0, 0, 0.5],
@@ -129,9 +131,54 @@ def transition(self,
         [0, 0.5, 0.5]
       ]
     ]
-    edge_points = np.array(edge_points) * unit_cell_size
-    edge_wire = cq.Edge.makeSpline(
-      cq.Vector(edge_points[0][0], edge_points[0][1], edge_points[0][2])
+    edge_points = np.array(edge_points) * unit_cell_size * 2
+    transition_vector = [cq.Vector(tuple(edge_points[0][i])) for i in range(3)]
+    edge_wire = cq.Edge.makeSpline(transition_vector)
+    """
+    half_uc = 0.5 * unit_cell_size
+    quarter_uc = 0.25 * unit_cell_size
+    gyroid_pnts = [
+        (half_uc, half_uc),
+        (0.0, quarter_uc),
+        (- half_uc, half_uc)
+    ]
+    transition_negative_pnts = [
+        (- half_uc, half_uc),
+        (0.0, quarter_uc),
+        (half_uc, 0.0)
+    ]
+    delta_radius = half_uc - half_uc/sqrt(2)
+    schwarz_p_pnts = [
+        [half_uc, - half_uc, 0.0],
+        [half_uc, - delta_radius, - delta_radius],
+        [half_uc, 0.0, - half_uc]
+    ]
+    edge_wire = (
+        cq.Workplane('YZ')
+        .workplane(offset = - 0.5 * unit_cell_size)
+        .spline(gyroid_pnts)
     )
-    return self.union(self.eachpoint(lambda loc: edge_wire.val().located(loc), True))
+    edge_wire = edge_wire.add(
+        cq.Workplane('XZ')
+            .workplane(offset = 0.5 * unit_cell_size)
+            .spline(transition_negative_pnts)
+    )
+    edge_wire = edge_wire.add(
+        cq.Workplane()
+            .workplane()
+            .moveTo(schwarz_p_pnts[0][0],
+                schwarz_p_pnts[0][1]
+                )
+            .threePointArc(tuple(schwarz_p_pnts[1]),
+                tuple(schwarz_p_pnts[2])
+                )
+    )
+    edge_wire = edge_wire.close()
+    surface_points = [[0, 0, 0]]
+    plate_0 = cq.Workplane("XY")
+    plate_0 = plate_0.interpPlate(edge_wire, surface_points, 0.5 * thickness)
+    plate_0 = plate_0.union(
+        cq.Workplane("XY").interpPlate(edge_wire, surface_points, - 0.5 * thickness)
+    )
+    return self.union(self.eachpoint(lambda loc: plate_0.val().located(loc), True))
 cq.Workplane.transition = transition

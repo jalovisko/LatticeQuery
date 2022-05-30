@@ -13,8 +13,8 @@ cq.Workplane.gyroid_heterogeneous_lattice = gyroid_heterogeneous_lattice
 min_thickness = 10.
 max_thickness = 10.
 unit_cell_size = 100.
-Nx = 5
-Ny = 5
+Nx = 1
+Ny = 1
 Nz = 1
 
 # END USER INPUT
@@ -29,7 +29,3 @@ p = cq.Workplane().transformed(
 tr = cq.Workplane().transformed(
     offset = (0.5 * unit_cell_size, 0, 0)
     ).transition(thickness, unit_cell_size)
-
-spline_cq = cq.Workplane("XY")
-spline_cq.objects = [spline_edge]
-
