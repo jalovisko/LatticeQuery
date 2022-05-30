@@ -1,3 +1,4 @@
+from difflib import restore
 import cadquery as cq
 
 from math import sqrt
@@ -126,6 +127,7 @@ def transition(self,
     half_uc = 0.5 * unit_cell_size
     quarter_uc = 0.25 * unit_cell_size
     delta_radius = half_uc - half_uc/sqrt(2)
+    # transition 1
     gyroid_pnts = [
         (half_uc, half_uc),
         (0.0, quarter_uc),
@@ -214,5 +216,97 @@ def transition(self,
         .interpPlate(edge_wire, surface_points, - 0.5 * thickness)
     )
     result = plate_0.union(plate_1)
+    # transition 3
+    gyroid_pnts = [
+        (half_uc, half_uc),
+        (0.0, quarter_uc),
+        (- half_uc, half_uc)
+    ]
+    transition_negative_pnts = [
+        (- half_uc, half_uc),
+        (0.0, quarter_uc),
+        (half_uc, 0.0)
+    ]
+    schwarz_p_pnts = [
+        [half_uc, - half_uc, 0.0],
+        [half_uc, - delta_radius, delta_radius],
+        [half_uc, 0.0, half_uc]
+    ]
+    edge_wire = (
+        cq.Workplane('YZ')
+        .workplane(offset = - 0.5 * unit_cell_size)
+        .spline(gyroid_pnts)
+    )
+    edge_wire = edge_wire.add(
+        cq.Workplane('XZ')
+            .workplane(offset = 0.5 * unit_cell_size)
+            .spline(transition_negative_pnts)
+    )
+    edge_wire = edge_wire.add(
+        cq.Workplane()
+            .workplane()
+            .moveTo(schwarz_p_pnts[0][0],
+                schwarz_p_pnts[0][1]
+                )
+            .threePointArc(tuple(schwarz_p_pnts[1]),
+                tuple(schwarz_p_pnts[2])
+                )
+    )
+    edge_wire = edge_wire.add(edge_wire.close())
+    surface_points = [[0, 0, 0]]
+    plate_2 = cq.Workplane("XY").transformed(offset = (0, 0, unit_cell_size))
+    plate_2 = plate_2.interpPlate(edge_wire, surface_points, 0.5 * thickness)
+    plate_2 = plate_2.union(
+        cq.Workplane("XY")
+        .transformed(offset = (0, 0, unit_cell_size))
+        .interpPlate(edge_wire, surface_points, - 0.5 * thickness)
+    )
+    result = result.union(plate_2)
+    # transition 4
+    gyroid_pnts = [
+        (- half_uc, - half_uc),
+        (0.0, - quarter_uc),
+        (half_uc, - half_uc)
+    ]
+    transition_negative_pnts = [
+        (- half_uc, - half_uc),
+        (0.0, - quarter_uc),
+        (half_uc, 0.0)
+    ]
+    schwarz_p_pnts = [
+        [half_uc, half_uc, 0.0],
+        [half_uc, delta_radius, delta_radius],
+        [half_uc, 0.0, half_uc]
+    ]
+    edge_wire = (
+        cq.Workplane('YZ')
+        .workplane(offset = - 0.5 * unit_cell_size)
+        .spline(gyroid_pnts)
+    )
+    edge_wire = edge_wire.add(
+        cq.Workplane('XZ')
+            .workplane(offset = - 0.5 * unit_cell_size)
+            .spline(transition_negative_pnts)
+    )
+    edge_wire = edge_wire.add(
+        cq.Workplane()
+            .workplane()
+            .moveTo(schwarz_p_pnts[0][0],
+                schwarz_p_pnts[0][1]
+                )
+            .threePointArc(tuple(schwarz_p_pnts[1]),
+                tuple(schwarz_p_pnts[2])
+                )
+    )
+    edge_wire = edge_wire.add(edge_wire.close())
+    surface_points = [[0, 0, 0]]
+    plate_3 = cq.Workplane("XY").transformed(offset = (0, unit_cell_size, unit_cell_size))
+    plate_3 = plate_3.interpPlate(edge_wire, surface_points, 0.5 * thickness)
+    plate_3 = plate_3.union(
+        cq.Workplane("XY")
+        .transformed(offset = (0, unit_cell_size, unit_cell_size))
+        .interpPlate(edge_wire, surface_points, - 0.5 * thickness)
+    )
+    result = result.union(plate_3)
     return self.union(self.eachpoint(lambda loc: result.val().located(loc), True))
 cq.Workplane.transition = transition
