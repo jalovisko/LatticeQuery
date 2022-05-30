@@ -173,7 +173,7 @@ def transition(self,
                 tuple(schwarz_p_pnts[2])
                 )
     )
-    edge_wire = edge_wire.close()
+    edge_wire = edge_wire.add(edge_wire.close())
     surface_points = [[0, 0, 0]]
     plate_0 = cq.Workplane("XY")
     plate_0 = plate_0.interpPlate(edge_wire, surface_points, 0.5 * thickness)

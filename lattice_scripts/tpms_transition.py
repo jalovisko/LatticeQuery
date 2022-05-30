@@ -27,5 +27,5 @@ p = cq.Workplane().transformed(
     ).p_half(thickness, unit_cell_size)
 
 tr = cq.Workplane().transformed(
-    offset = (0.5 * unit_cell_size, 0, 0)
+    offset = (1.5 * unit_cell_size, 0.5 * unit_cell_size, 0.5 * unit_cell_size)
     ).transition(thickness, unit_cell_size)
