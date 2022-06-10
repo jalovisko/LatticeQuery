@@ -3,8 +3,12 @@ import cadquery as cq
 
 from math import sqrt
 
+from ..commons import eachpointAdaptive
 from .gyroid import gyroid_000
 from .schwartz import schwartz_p_000
+
+# Register our custom plugins before use.
+cq.Workplane.eachpointAdaptive = eachpointAdaptive
 
 def gyroid_half_x(thickness: float,
                 unit_cell_size: float,
@@ -120,7 +124,7 @@ def p_half(self,
 
 cq.Workplane.p_half = p_half
 
-def transition(self,
+def transition(location,
         thickness: float,
         unit_cell_size: float
         ) -> cq.cq.Workplane:
@@ -308,5 +312,52 @@ def transition(self,
         .interpPlate(edge_wire, surface_points, - 0.5 * thickness)
     )
     result = result.union(plate_3)
-    return self.union(self.eachpoint(lambda loc: result.val().located(loc), True))
+    return result.val().located(location)
 cq.Workplane.transition = transition
+
+def transition_layer(
+    thickness: float,
+    unit_cell_size: float,
+    size_1: int,
+    size_2: int,
+    direction: str = 'X'
+    ):
+    result = cq.Workplane()
+    transition_pnts = []
+    for i in range(size_1):
+        for j in range(size_2):
+            transition_pnts.append((0, i * unit_cell_size, j * unit_cell_size))
+    unit_cell_size *= 0.5 # because the unit cell is made of 8 smaller ones
+    unit_cell_params = []
+    for i in range(size_1):
+        for j in range(size_2):
+            unit_cell_params.append(
+                {
+                    "thickness": thickness,
+                    "unit_cell_size": unit_cell_size
+                })
+    result = result.pushPoints(transition_pnts)
+    result = result.eachpointAdaptive(transition,
+									  callback_extra_args = unit_cell_params,
+									  useLocalCoords = True)
+    """
+    for i in range(size_1):
+        for j in range(size_2):
+            result = result.union(
+                cq.Workplane().transformed(
+                    offset = (0, i * unit_cell_size, j * unit_cell_size)
+                ).gyroid_half_x(thickness, unit_cell_size)
+            )
+            result = result.union(
+                cq.Workplane().transformed(
+                    offset = (0, i * unit_cell_size, j * unit_cell_size)
+                ).p_half(thickness, unit_cell_size)
+            )
+            result = result.union(
+                cq.Workplane().transformed(
+                    offset = (0, i * unit_cell_size, j * unit_cell_size)
+                ).transition(thickness, unit_cell_size)
+            )
+    """
+    return result
+cq.Workplane.transition_layer = transition_layer
