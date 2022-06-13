@@ -317,12 +317,36 @@ cq.Workplane.transition = transition
 def half_gyroid_unit_cell(
     location, thickness: float, unit_cell_size: float
 ) -> cq.cq.Workplane:
+    """
+    It creates a half gyroid unit cell with a given thickness and unit cell size, and then moves it to a
+    given location
+    
+    Args:
+      location: the location of the unit cell
+      thickness (float): the thickness of the gyroid
+      unit_cell_size (float): the size of the unit cell in the x, y, and z directions.
+    
+    Returns:
+      A cq.cq.Workplane object
+    """
     g = cq.Workplane().gyroid_half_x(thickness, unit_cell_size)
     return g.val().located(location)
 
 def half_p_unit_cell(
     location, thickness: float, unit_cell_size: float
 ) -> cq.cq.Workplane:
+    """
+    Create a half-unit-cell of a Schwarz P unit cell, with a given thickness and unit cell size, and
+    place it at a given location
+    
+    Args:
+      location: the location of the unit cell
+      thickness (float): the thickness of the unit cell
+      unit_cell_size (float): the size of the unit cell, in mm
+    
+    Returns:
+      A workplane with a half unit cell.
+    """
     p = cq.Workplane().transformed(
         offset = (unit_cell_size, 0, 0)
         ).p_half(thickness, unit_cell_size)
@@ -331,6 +355,19 @@ def half_p_unit_cell(
 def transition_unit_cell(
     location, thickness: float, unit_cell_size: float
     ) -> cq.cq.Workplane:
+    """
+    It creates a transition
+    between two unit cells, and then moves it to the specified location
+    
+    Args:
+      location: a tuple of (x, y, z) coordinates
+      thickness (float): the thickness of the transition
+      unit_cell_size (float): the size of the unit cell in the x, y, and z directions
+    
+    Returns:
+      A cq.cq.Workplane object
+    """
+
     tr = cq.Workplane().transformed(
         offset = (1.5 * unit_cell_size, 0.5 * unit_cell_size, 0.5 * unit_cell_size)
         ).transition(thickness, unit_cell_size)
@@ -338,12 +375,27 @@ def transition_unit_cell(
 cq.Workplane.transition_unit_cell = transition_unit_cell
 
 def transition_layer(
-    thickness: float,
-    unit_cell_size: float,
-    size_1: int,
-    size_2: int,
+    thickness: float, unit_cell_size: float, size_1: int, size_2: int,
     direction: str = 'X'
     ):
+    """
+    It takes a thickness, unit cell size, and two sizes, and returns three objects: a gyroid, a p, and a
+    transition between them
+    
+    Args:
+      thickness (float): the thickness of the layer
+      unit_cell_size (float): the size of the unit cell in the X and Y directions
+      size_1 (int): number of unit cells in the X direction
+      size_2 (int): number of unit cells in the Y direction
+      direction (str): the direction of the transition layer. Defaults to X
+    
+    Returns:
+      A tuple of three objects:
+        - g: a Workplane object containing the gyroid unit cells
+        - p: a Workplane object containing the p unit cells
+        - tr: a Workplane object containing the transition unit cells
+    """
+
     result = cq.Workplane()
     g_pnts = []
     transition_pnts = []
