@@ -1,11 +1,11 @@
 import cadquery as cq
 
-from parfunlib.topologies.tpms_transition import transition_layer#, gyroid_half_x, p_half, transition
-
+from parfunlib.topologies.tpms_transition import transition_unit_cell#, gyroid_half_x, p_half, transition
+from parfunlib.topologies.tpms_transition import transition_layer
 #cq.Workplane.gyroid_half_x = gyroid_half_x
 #cq.Workplane.p_half = p_half
 #cq.Workplane.transition = transition
-cq.Workplane.transition_layer = transition_layer
+cq.Workplane.transition_unit_cell = transition_unit_cell
 
 
 # BEGIN USER INPUT
@@ -21,14 +21,7 @@ Nz = 2
 
 thickness = min_thickness
 
-tr = transition_layer(thickness, unit_cell_size, Ny, Nz)
-"""
-g = gyroid_half_x(thickness, unit_cell_size)
-p = cq.Workplane().transformed(
-    offset = (unit_cell_size, 0, 0)
-    ).p_half(thickness, unit_cell_size)
+#lattice, tr = cq.Workplane().transition_unit_cell(thickness, unit_cell_size)
 
-tr = cq.Workplane().transformed(
-    offset = (1.5 * unit_cell_size, 0.5 * unit_cell_size, 0.5 * unit_cell_size)
-    ).transition(thickness, unit_cell_size)
-"""
+g, p, tr = transition_layer(thickness, unit_cell_size, Ny, Nz)
+

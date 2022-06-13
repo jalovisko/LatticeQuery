@@ -1,7 +1,7 @@
-from difflib import restore
 import cadquery as cq
 
 from math import sqrt
+from typing import List
 
 from ..commons import eachpointAdaptive
 from .gyroid import gyroid_000
@@ -10,10 +10,10 @@ from .schwartz import schwartz_p_000
 # Register our custom plugins before use.
 cq.Workplane.eachpointAdaptive = eachpointAdaptive
 
-def gyroid_half_x(thickness: float,
-                unit_cell_size: float,
-				delta: float = 1e-8 # a small tolerance (1e-10 is too small)
-				) -> cq.cq.Workplane:
+def gyroid_half_x(
+    self, thickness: float, unit_cell_size: float,
+    delta: float = 1e-8 # a small tolerance (1e-10 is too small)
+) -> cq.cq.Workplane:
     """
     Create a unit cell of gyroid, with a given thickness, and a given unit cell size
     in all 8 octants
@@ -58,26 +58,17 @@ def gyroid_half_x(thickness: float,
                              basePointVector = (0, 1.5 * unit_cell_size, 0))
     result = result.union(g_010)
     # Octante 001
-    g_001 = g_110.translate((-unit_cell_size,
-                             -unit_cell_size,
-                             unit_cell_size))
+    g_001 = g_110.translate(
+        (-unit_cell_size,
+        -unit_cell_size,
+        unit_cell_size))
     result = result.union(g_001)
-    # Octante 101
-    #g_101 = g_010.translate((unit_cell_size,
-    #                         -unit_cell_size,
-    #                         unit_cell_size))
-    #result = result.union(g_101)
     # Octante 011
     g_011 = g_100.translate((- (1 + delta) * unit_cell_size,
                              (1 + delta) * unit_cell_size,
                              (1 + delta) * unit_cell_size))
     result = result.union(g_011)
-    # Octante 111
-    #g_111 = g_000.translate(((1 + delta) * unit_cell_size,
-    #                        (1 + delta) * unit_cell_size,
-    #                        (1 + delta) * unit_cell_size))
-    #result = result.union(g_111)
-    return result
+    return self.union(self.eachpoint(lambda loc: result.val().located(loc), True))
 cq.Workplane.gyroid_half_x = gyroid_half_x
 
 def p_half(self,
@@ -121,13 +112,21 @@ def p_half(self,
                             basePointVector = (0, 0, unit_cell_size))
     result = result.union(s_top)
     return self.union(self.eachpoint(lambda loc: result.val().located(loc), True))
-
 cq.Workplane.p_half = p_half
 
-def transition(location,
-        thickness: float,
-        unit_cell_size: float
-        ) -> cq.cq.Workplane:
+def transition(self, thickness: float, unit_cell_size: float
+    ) -> List[cq.cq.Workplane]:
+    """
+    It creates a transition between two unit cells of a gyroid and of a Schwarz
+    P surface
+    
+    Args:
+      thickness (float): the thickness of the lattice
+      unit_cell_size (float): the size of the unit cell in the x, y, and z directions
+    
+    Returns:
+      A cq.cq.Workplane object
+    """
     half_uc = 0.5 * unit_cell_size
     quarter_uc = 0.25 * unit_cell_size
     delta_radius = half_uc - half_uc/sqrt(2)
@@ -312,8 +311,31 @@ def transition(location,
         .interpPlate(edge_wire, surface_points, - 0.5 * thickness)
     )
     result = result.union(plate_3)
-    return result.val().located(location)
+    return self.union(self.eachpoint(lambda loc: result.val().located(loc), True))
 cq.Workplane.transition = transition
+
+def half_gyroid_unit_cell(
+    location, thickness: float, unit_cell_size: float
+) -> cq.cq.Workplane:
+    g = cq.Workplane().gyroid_half_x(thickness, unit_cell_size)
+    return g.val().located(location)
+
+def half_p_unit_cell(
+    location, thickness: float, unit_cell_size: float
+) -> cq.cq.Workplane:
+    p = cq.Workplane().transformed(
+        offset = (unit_cell_size, 0, 0)
+        ).p_half(thickness, unit_cell_size)
+    return p.val().located(location)
+
+def transition_unit_cell(
+    location, thickness: float, unit_cell_size: float
+    ) -> cq.cq.Workplane:
+    tr = cq.Workplane().transformed(
+        offset = (1.5 * unit_cell_size, 0.5 * unit_cell_size, 0.5 * unit_cell_size)
+        ).transition(thickness, unit_cell_size)
+    return tr.val().located(location)
+cq.Workplane.transition_unit_cell = transition_unit_cell
 
 def transition_layer(
     thickness: float,
@@ -323,10 +345,12 @@ def transition_layer(
     direction: str = 'X'
     ):
     result = cq.Workplane()
+    g_pnts = []
     transition_pnts = []
     for i in range(size_1):
         for j in range(size_2):
-            transition_pnts.append((0, i * unit_cell_size, j * unit_cell_size))
+            g_pnts.append((0, i * unit_cell_size, j * unit_cell_size))
+            transition_pnts.append((0.5 * unit_cell_size, i * unit_cell_size, j * unit_cell_size))
     unit_cell_size *= 0.5 # because the unit cell is made of 8 smaller ones
     unit_cell_params = []
     for i in range(size_1):
@@ -336,28 +360,20 @@ def transition_layer(
                     "thickness": thickness,
                     "unit_cell_size": unit_cell_size
                 })
-    result = result.pushPoints(transition_pnts)
-    result = result.eachpointAdaptive(transition,
-									  callback_extra_args = unit_cell_params,
-									  useLocalCoords = True)
-    """
-    for i in range(size_1):
-        for j in range(size_2):
-            result = result.union(
-                cq.Workplane().transformed(
-                    offset = (0, i * unit_cell_size, j * unit_cell_size)
-                ).gyroid_half_x(thickness, unit_cell_size)
-            )
-            result = result.union(
-                cq.Workplane().transformed(
-                    offset = (0, i * unit_cell_size, j * unit_cell_size)
-                ).p_half(thickness, unit_cell_size)
-            )
-            result = result.union(
-                cq.Workplane().transformed(
-                    offset = (0, i * unit_cell_size, j * unit_cell_size)
-                ).transition(thickness, unit_cell_size)
-            )
-    """
-    return result
+    g = result.pushPoints(g_pnts)
+    g = g.eachpointAdaptive(
+        half_gyroid_unit_cell,
+        callback_extra_args = unit_cell_params,
+        useLocalCoords = True)
+    p = result.pushPoints(transition_pnts)
+    p = p.eachpointAdaptive(
+        half_p_unit_cell,
+        callback_extra_args = unit_cell_params,
+        useLocalCoords = True)
+    tr = result.pushPoints(g_pnts)
+    tr = tr.eachpointAdaptive(
+        transition_unit_cell,
+        callback_extra_args = unit_cell_params,
+        useLocalCoords = True)
+    return g, p, tr
 cq.Workplane.transition_layer = transition_layer
