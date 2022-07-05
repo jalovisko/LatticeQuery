@@ -140,11 +140,10 @@ def unit_cell(location: cq.occ_impl.geom.Location,
     return result.val().located(location)
 cq.Workplane.unit_cell = unit_cell
 
-
 def gyroid_homogeneous_lattice(unit_cell_size: float,
 							  thickness: float,
 							  Nx: int, Ny: int, Nz: int
-                              ) -> cq.cq.Workplane:
+                ) -> cq.cq.Workplane:
     """
     Create a unit cell of gyroid, and repeat it Nx, Ny, Nz times
     

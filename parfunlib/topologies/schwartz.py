@@ -198,6 +198,7 @@ def schwartz_d_heterogeneous_lattice(unit_cell_size,
                                 rule = 'linear'):
     # Register the custrom plugin 
     cq.Workplane.eachpointAdaptive = eachpointAdaptive
+    cq.Workplane.schwartz_d_000 = schwartz_d_000
     if rule == 'linear':
         thicknesses = np.linspace(min_thickness, max_thickness, Nz)
     if rule == 'sin':

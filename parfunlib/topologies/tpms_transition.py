@@ -1,6 +1,8 @@
+from fnmatch import translate
 import cadquery as cq
 
 from math import sqrt
+import numpy as np
 from typing import List
 
 from ..commons import eachpointAdaptive
@@ -375,8 +377,9 @@ def transition_unit_cell(
 cq.Workplane.transition_unit_cell = transition_unit_cell
 
 def transition_layer(
-    thickness: float, unit_cell_size: float, size_1: int, size_2: int,
-    direction: str = 'X'
+    min_thickness: float, max_thickness: float, unit_cell_size: float, size_1: int, size_2: int,
+    direction: str = 'X',
+    rule: str = 'linear'
     ):
     """
     It takes a thickness, unit cell size, and two sizes, and returns three objects: a gyroid, a p, and a
@@ -395,8 +398,18 @@ def transition_layer(
         - p: a Workplane object containing the p unit cells
         - tr: a Workplane object containing the transition unit cells
     """
-
+    # registering the plugins for further use
+    cq.Workplane.eachpointAdaptive = eachpointAdaptive
+    cq.Workplane.gyroid_half_x = gyroid_half_x
+    cq.Workplane.p_half = p_half
+    cq.Workplane.transition = transition
+    if rule == 'linear':
+        thicknesses = np.linspace(min_thickness, max_thickness, size_2)
     result = cq.Workplane()
+    if direction == 'Y':
+        result = result.transformed(offset = (unit_cell_size, unit_cell_size, 0))
+        result = result.transformed(rotate = (0, -90, 0))
+        result = result.transformed(rotate = (90, 0, 0))
     g_pnts = []
     transition_pnts = []
     for i in range(size_1):
@@ -409,7 +422,7 @@ def transition_layer(
         for j in range(size_2):
             unit_cell_params.append(
                 {
-                    "thickness": thickness,
+                    "thickness": thicknesses[j],
                     "unit_cell_size": unit_cell_size
                 })
     g = result.pushPoints(g_pnts)

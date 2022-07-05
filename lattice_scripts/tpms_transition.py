@@ -7,21 +7,21 @@ from parfunlib.topologies.tpms_transition import transition_layer
 #cq.Workplane.transition = transition
 cq.Workplane.transition_unit_cell = transition_unit_cell
 
+from parfunlib.commons import eachpointAdaptive
 
 # BEGIN USER INPUT
 
-min_thickness = 10.
-max_thickness = 10.
+min_thickness = 2.
+max_thickness = 2.
 unit_cell_size = 100.
-Nx = 2
-Ny = 2
-Nz = 2
+Nx = 1
+Ny = 1
+Nz = 1
 
 # END USER INPUT
 
-thickness = min_thickness
-
 #lattice, tr = cq.Workplane().transition_unit_cell(thickness, unit_cell_size)
 
-g, p, tr = transition_layer(thickness, unit_cell_size, Ny, Nz)
+g, p, tr = transition_layer(
+    min_thickness, max_thickness, unit_cell_size, Ny, Nz, 'Y')
 
