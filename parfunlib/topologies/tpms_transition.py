@@ -406,10 +406,14 @@ def transition_layer(
     if rule == 'linear':
         thicknesses = np.linspace(min_thickness, max_thickness, size_2)
     result = cq.Workplane()
-    if direction == 'Y':
+    if direction == 'Z':
         result = result.transformed(offset = (unit_cell_size, unit_cell_size, 0))
         result = result.transformed(rotate = (0, -90, 0))
         result = result.transformed(rotate = (90, 0, 0))
+    if direction == 'Y':
+        result = result.transformed(offset = (0, 0, unit_cell_size))
+        result = result.transformed(rotate = (0, 0, 90))
+        result = result.transformed(rotate = (-90, 0, 0))
     g_pnts = []
     transition_pnts = []
     for i in range(size_1):
@@ -440,5 +444,9 @@ def transition_layer(
         transition_unit_cell,
         callback_extra_args = unit_cell_params,
         useLocalCoords = True)
+    if direction == 'Y':
+        g = g.mirror(mirrorPlane="YZ")
+        p = p.mirror(mirrorPlane="YZ")
+        tr = tr.mirror(mirrorPlane="YZ")
     return g, p, tr
 cq.Workplane.transition_layer = transition_layer
