@@ -378,7 +378,7 @@ cq.Workplane.transition_unit_cell = transition_unit_cell
 
 def transition_layer(
     min_thickness: float, max_thickness: float, unit_cell_size: float, size_1: int, size_2: int,
-    direction: str = 'X',
+    direction: str = 'X+',
     rule: str = 'linear'
     ):
     """
@@ -406,14 +406,25 @@ def transition_layer(
     if rule == 'linear':
         thicknesses = np.linspace(min_thickness, max_thickness, size_2)
     result = cq.Workplane()
-    if direction == 'Z':
-        result = result.transformed(offset = (unit_cell_size, unit_cell_size, 0))
-        result = result.transformed(rotate = (0, -90, 0))
-        result = result.transformed(rotate = (90, 0, 0))
-    if direction == 'Y':
+    if direction == 'Y+':
         result = result.transformed(offset = (0, 0, unit_cell_size))
         result = result.transformed(rotate = (0, 0, 90))
         result = result.transformed(rotate = (-90, 0, 0))
+    if direction == 'Z+':
+        result = result.transformed(offset = (unit_cell_size, unit_cell_size, 0))
+        result = result.transformed(rotate = (0, -90, 0))
+        result = result.transformed(rotate = (90, 0, 0))
+    if direction == 'X-':
+        result = result.transformed(offset = (1.5 * unit_cell_size, unit_cell_size, - unit_cell_size))
+        result = result.transformed(rotate = (0, 0, 180))
+    if direction == 'Y-':
+        result = result.transformed(offset = (0, 1.5 * unit_cell_size, unit_cell_size))
+        result = result.transformed(rotate = (0, 0, -90))
+        result = result.transformed(rotate = (-90, 0, 0))
+    if direction == 'Z-':
+        result = result.transformed(offset = (0, unit_cell_size, 1.5 * unit_cell_size))
+        result = result.transformed(rotate = (0, 0, -90))
+        result = result.transformed(rotate = (0, 90, 0))
     g_pnts = []
     transition_pnts = []
     for i in range(size_1):
@@ -444,9 +455,13 @@ def transition_layer(
         transition_unit_cell,
         callback_extra_args = unit_cell_params,
         useLocalCoords = True)
-    if direction == 'Y':
+    if direction == 'Y+':
         g = g.mirror(mirrorPlane="YZ")
         p = p.mirror(mirrorPlane="YZ")
         tr = tr.mirror(mirrorPlane="YZ")
+    if direction == 'X-':
+        g = g.mirror(mirrorPlane="XY")
+        p = p.mirror(mirrorPlane="XY")
+        tr = tr.mirror(mirrorPlane="XY")
     return g, p, tr
 cq.Workplane.transition_layer = transition_layer

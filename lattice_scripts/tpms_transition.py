@@ -23,5 +23,5 @@ Nz = 1
 #lattice, tr = cq.Workplane().transition_unit_cell(thickness, unit_cell_size)
 
 g, p, tr = transition_layer(
-    min_thickness, max_thickness, unit_cell_size, Ny, Nz, 'Y')
+    min_thickness, max_thickness, unit_cell_size, Ny, Nz, 'Y-')
 
