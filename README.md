@@ -49,8 +49,7 @@ schwartz = schwartz_p_heterogeneous_lattice(unit_cell_size, min_thickness, max_t
 ```
 As you can see, a single function handles requires geometric arguments and handles all the modeling. The result is the following:
 ![Heterogeneous Schwartz P lattice](/screenshots/hetero-schwartz.png)
-
-The `lattce_scripts` directory includes a few more examples.
+This and many more examples of the implementation are located in the `lattce_scripts` directory.
 
 ## Known issues
 Sometimes the modeling would fail with an error like `Brep: command not done`. This is often solved by passing a float argument to the function rather than an integer one. You can also try to increase the unit cell size, let's say, 10 times, and then scale it down 10 times.
