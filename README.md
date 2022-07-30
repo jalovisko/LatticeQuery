@@ -1,6 +1,6 @@
 # LatticeQuery - An F-rep tool for geometric modeling of lattice structures
 
-The tool is based on the [CadQuery GUI](https://github.com/CadQuery/CQ-editor.git) editor which in turn is based on PyQT and OpenCASCADE and supports Linux, Windows and MacOS.
+The tool allows modeling of heterogeneous lattice structures, both beam-based and surface-based. The tool is based on the [CadQuery GUI](https://github.com/CadQuery/CQ-editor.git) editor which allows parametric modeling with [OpenCASCADE](https://www.opencascade.com/) and PyQT and supports Linux, Windows and MacOS.
 
 For the CadQuery documentation, please address [its repository](https://github.com/CadQuery/cadquery) and [official documentation](https://cadquery.readthedocs.io/en/latest/).
 
