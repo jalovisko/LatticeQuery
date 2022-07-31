@@ -4,8 +4,18 @@ The tool allows modeling of heterogeneous lattice structures, both beam-based an
 
 For the CadQuery documentation, please address [its repository](https://github.com/CadQuery/cadquery) and [official documentation](https://cadquery.readthedocs.io/en/latest/).
 
+## Installation
+The installation of this tool requires [Anaconda](https://www.anaconda.com/) installed. Once installed, you can create a virtual conda environment as follows:
+```bash
+conda env create -f lqgui_env.yml -n lq
+conda activate lq
+```
+
 ## Usage
-Most of the functionality is located in the `parfunlib` folder (stands for 'parametric function library').
+Most of the functionality is located in the `parfunlib` folder (stands for 'parametric function library'). Within the installed virtual environment, run the main Python script as follows:
+```bash
+python run.py
+```
 
 The topologies that are implemented include:
 * Beam-based
