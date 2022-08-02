@@ -59,7 +59,14 @@ schwartz = schwartz_p_heterogeneous_lattice(unit_cell_size, min_thickness, max_t
 ```
 As you can see, a single function handles requires geometric arguments and handles all the modeling. The result is the following:
 ![Heterogeneous Schwartz P lattice](/screenshots/hetero-schwartz.png)
+
+## Other examples
 This and many more examples of the implementation are located in the `lattce_scripts` directory.
+An example is a Python script that can be imported from within the editor (the window you see when running `run.py`).
+These examples include the geometric modeling of:
+* A homogeneous gyroid lattice (`gyroid.py`)
+* A conformal heterogeneous lattice filling a cylindrical tube (`tire.py`)
+* A heterogeneous FCC lattice (`FCC_xyz.py`)
 
 ## Known issues
 Sometimes the modeling would fail with an error like `Brep: command not done`. This is often solved by passing a float argument to the function rather than an integer one. You can also try to increase the unit cell size, let's say, 10 times, and then scale it down 10 times.
