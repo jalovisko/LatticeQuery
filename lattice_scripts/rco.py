@@ -1,4 +1,4 @@
-from parfunlib.topologies.rco import rco_heterogeneous_lattice
+from lq.topologies.rco import rco_heterogeneous_lattice
 cq.Workplane.rco_heterogeneous_lattice = rco_heterogeneous_lattice
 
 # USER INPUT

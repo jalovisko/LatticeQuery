@@ -1,8 +1,8 @@
 # Python
 import cadquery as cq
 
-from parfunlib.topologies.gyroid import gyroid_heterogeneous_lattice
-from parfunlib.commons import make_support_plate
+from lq.topologies.gyroid import gyroid_heterogeneous_lattice
+from lq.commons import make_support_plate
 cq.Workplane.gyroid_heterogeneous_lattice = gyroid_heterogeneous_lattice
 
 # BEGIN USER INPUT

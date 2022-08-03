@@ -1,15 +1,15 @@
-from parfunlib.topologies.fcc import fcc_heterogeneous_lattice
+from lq.topologies.fcc import fcc_heterogeneous_lattice
 
 # USER INPUT
 
 unit_cell_size = 10
-min_strut_diameter = 1.
-max_strut_diameter = 1.
-min_node_diameter = 1.0
-max_node_diameter = 1.0
+min_strut_diameter = 0.5
+max_strut_diameter = 2.
+min_node_diameter = 0.5
+max_node_diameter = 2.
 Nx = 5
-Ny = 5
-Nz = 1
+Ny = 1
+Nz = 5
 
 # END USER INPUT
 

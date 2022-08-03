@@ -3,8 +3,10 @@ import cadquery as cq
 from math import cos, sqrt
 import numpy as np
 import time
-from parfunlib.topologies.schwartz import schwartz_d_heterogeneous_lattice
+from lq.topologies.schwartz import schwartz_d_heterogeneous_lattice
 cq.Workplane.schwartz_d_heterogeneous_lattice = schwartz_d_heterogeneous_lattice
+# import schwartz_p_heterogeneous_lattice instead for
+# the P surface
 
 # BEGIN USER INPUT
 

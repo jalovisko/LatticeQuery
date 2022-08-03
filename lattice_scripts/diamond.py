@@ -1,4 +1,4 @@
-from parfunlib.topologies.diamond import diamond_heterogeneous_lattice
+from lq.topologies.diamond import diamond_heterogeneous_lattice
 
 # USER INPUT
 
@@ -7,9 +7,9 @@ min_strut_diameter = 1
 max_strut_diameter = 1
 min_node_diameter = 1.1
 max_node_diameter = 1.1
-Nx = 1
-Ny = 1
-Nz = 1
+Nx = 2
+Ny = 2
+Nz = 2
 
 # END USER INPUT
 

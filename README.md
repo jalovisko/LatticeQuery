@@ -66,7 +66,15 @@ An example is a Python script that can be imported from within the editor (the w
 These examples include the geometric modeling of:
 * A homogeneous gyroid lattice (`gyroid.py`)
 * A conformal heterogeneous lattice filling a cylindrical tube (`tire.py`)
-* A heterogeneous FCC lattice (`FCC_xyz.py`)
+* A heterogeneous FCC lattice with the linearly changing beam thickness (`FCC_heterogeneous_lattice.py`)
+* A heterogeneous BCC lattice with the beam thickness changing according to the parabolic distribution (`BCC_heterogeneous_lattice.py`)
+* A heterogeneous FCC lattice with the beam cross-section gradually changing from square to circle (`changing_cross_section.py`)
+* A heterogeneous diamond lattice with the linearly changing beam thickness (`diamond.py`)
+* A heterogeneous FBCC lattice with the linearly changing beam thickness (`FBCC_heterogeneous_lattice.py`)
+* A heterogeneous gyroid lattice with the linearly changing thickness (`heterogeneous_gyroid.py`)
+* A heterogeneous Schwarz D and P lattices with the linearly changing thickness (`heterogeneous_schwartz.py`)
+* A heterogeneous Schwarz D lattice with the thickness changing according to the periodic sine distribution (`schwartz-d.py`)
+
 
 ## Known issues
 Sometimes the modeling would fail with an error like `Brep: command not done`. This is often solved by passing a float argument to the function rather than an integer one. You can also try to increase the unit cell size, let's say, 10 times, and then scale it down 10 times.

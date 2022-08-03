@@ -1,10 +1,10 @@
 import cadquery as cq
 
-from parfunlib.commons import eachpointAdaptive
-from parfunlib.topologies.bcc import unit_cell as bcc_unit_cell
-from parfunlib.topologies.bcc import create_diagonal_strut as create_bcc_diagonal_strut
-from parfunlib.topologies.fcc import unit_cell as fcc_unit_cell
-from parfunlib.topologies.fcc import create_diagonal_strut as create_fcc_diagonal_strut
+from lq.commons import eachpointAdaptive
+from lq.topologies.bcc import unit_cell as bcc_unit_cell
+from lq.topologies.bcc import create_diagonal_strut as create_bcc_diagonal_strut
+from lq.topologies.fcc import unit_cell as fcc_unit_cell
+from lq.topologies.fcc import create_diagonal_strut as create_fcc_diagonal_strut
 
 
 from math import acos, atan, degrees, hypot, sqrt

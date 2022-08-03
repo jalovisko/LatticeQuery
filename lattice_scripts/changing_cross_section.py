@@ -3,19 +3,19 @@ import cadquery as cq
 from math import hypot
 import numpy as np
 
-from parfunlib.commons import cuboid_tranformation, eachpointAdaptive, cylinder_tranformation
-from parfunlib.topologies.fcc import fcc_heterogeneous_lattice
+from lq.commons import cuboid_tranformation, eachpointAdaptive, cylinder_tranformation
+from lq.topologies.fcc import fcc_heterogeneous_lattice
 
 
 # USER INPUT
 
 unit_cell_size = 10
-min_strut_diameter = 0.5
-max_strut_diameter = 0.5
-min_node_diameter = 0.55
-max_node_diameter = 0.55
+min_strut_diameter = 0.1
+max_strut_diameter = 1.
+min_node_diameter = 0.11
+max_node_diameter = 1.1
 Nx = 8
-Ny = 1
+Ny = 8
 Nz = 8
 
 # END USER INPUT
