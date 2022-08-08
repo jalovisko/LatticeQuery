@@ -1,7 +1,7 @@
 # Python
 import cadquery as cq
 
-from parfunlib.topologies.gyroid import gyroid_homogeneous_lattice
+from lq.topologies.gyroid import gyroid_homogeneous_lattice
 cq.Workplane.gyroid_homogeneous_lattice = gyroid_homogeneous_lattice
 
 # BEGIN USER INPUT

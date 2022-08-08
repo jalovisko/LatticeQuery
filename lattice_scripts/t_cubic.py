@@ -1,4 +1,4 @@
-from parfunlib.topologies.tcubic import tcubic_heterogeneous_lattice
+from lq.topologies.tcubic import tcubic_heterogeneous_lattice
 
 # USER INPUT
 

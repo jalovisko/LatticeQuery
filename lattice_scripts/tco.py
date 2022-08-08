@@ -1,6 +1,6 @@
 import cadquery as cq
 
-from parfunlib.topologies.tco import tco_heterogeneous_lattice
+from lq.topologies.tco import tco_heterogeneous_lattice
 cq.Workplane.tco_heterogeneous_lattice = tco_heterogeneous_lattice
 
 # USER INPUT
