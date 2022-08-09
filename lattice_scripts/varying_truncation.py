@@ -1,14 +1,14 @@
-from parfunlib.topologies.tcubic import tcubic_heterogeneous_lattice
+from lq.topologies.tcubic import tcubic_heterogeneous_lattice
 
 # USER INPUT
 
 unit_cell_size = 10
-min_strut_diameter = 1
-max_strut_diameter = 3
-min_node_diameter = 1.1
-max_node_diameter = 3.3
-Nx = 2
-Ny = 2
+min_strut_diameter = 0.5
+max_strut_diameter = 4
+min_node_diameter = 0.55
+max_node_diameter = 4.4
+Nx = 10
+Ny = 10
 Nz = 10
 min_truncation = 0.001
 max_truncation = 0.999
@@ -25,4 +25,6 @@ result = tcubic_heterogeneous_lattice(unit_cell_size,
                                     Nx, Ny, Nz,
                                     min_truncation,
                                     max_truncation,
-                                    rule = 'linear_truncation')
+                                    rule = 'linear',
+                                    direction = 'X',
+                                    truncation = 'linear')

@@ -47,7 +47,7 @@ def eachpointAdaptive(
     .. todo:: Implement that empty dicts are used as arguments for calls to the callback if not 
         enough sets are provided for all objects on the stack.
     """
-
+    print('Building an element of an array...')
     # Convert the objects on the stack to a list of points.
     pnts = []
     plane = self.plane
@@ -80,7 +80,7 @@ def eachpointAdaptive(
     for r in res:
         if isinstance(r, cq.Wire) and not r.forConstruction:
             self._addPendingWire(r)
-
+    print(f'Success!\n{"-"*20}')
     return self.newObject(res)
 # Register our custom plugin before use.
 cq.Workplane.eachpointAdaptive = eachpointAdaptive

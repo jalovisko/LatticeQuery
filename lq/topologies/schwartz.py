@@ -50,6 +50,9 @@ def schwartz_p_000(self, thickness, unit_cell_size):
 
     surface_points = [[0, 0, 0]]
     plate_4 = cq.Workplane("XY")
+    print(edge_wire)
+    print(surface_points)
+    print(thickness)
     plate_4 = plate_4.interpPlate(edge_wire, surface_points, 0.5 * thickness)
     plate_4 = plate_4.union(
         cq.Workplane("XY").interpPlate(edge_wire, surface_points, - 0.5 * thickness)
@@ -99,7 +102,7 @@ def p_unit_cell(location, thickness, unit_cell_size,
     pnts = [tuple(unit_cell_size / 2 for i in range(3))]
     cq.Workplane.schwartz_p_000 = schwartz_p_000
     s_000 = (cq.Workplane("XY").pushPoints(pnts)
-             .schwartz_p_000(thickness, unit_cell_size))
+        .schwartz_p_000(thickness, unit_cell_size))
     result = s_000
     # Octante 100
     s_100 = s_000.mirror(mirrorPlane = "ZY",
@@ -172,6 +175,10 @@ def schwartz_p_heterogeneous_lattice(unit_cell_size,
         print(x_data)
         thicknesses = 0.5 * np.sin(x_data) * (max_thickness - min_thickness) + average(min_thickness, max_thickness)
         print(thicknesses)
+    if rule == 'parabola':
+        x = np.linspace(0, 1, num=Nz)
+        frep = lambda d_min, d_max :-4*d_max*(x-0.5)*(x-0.5)+d_max+d_min
+        thicknesses = frep(min_thickness, max_thickness)
     UC_pnts = []
     unit_cell_size = 0.5 * unit_cell_size # bacause it's made of 8 mirrored features
     for i in range(Nx):
@@ -207,6 +214,10 @@ def schwartz_d_heterogeneous_lattice(unit_cell_size,
         print(x_data)
         thicknesses = 0.5 * np.sin(x_data) * (max_thickness - min_thickness) + average(min_thickness, max_thickness)
         print(thicknesses)
+    if rule == 'parabola':
+        x = np.linspace(0, 1, num=Nz)
+        frep = lambda d_min, d_max :-4*d_max*(x-0.5)*(x-0.5)+d_max+d_min
+        thicknesses = frep(min_thickness, max_thickness)
     UC_pnts = []
     for i in range(Nx):
         for j in range(Ny):

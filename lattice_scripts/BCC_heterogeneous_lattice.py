@@ -1,18 +1,16 @@
-import cadquery as cq
-from lq.commons import eachpointAdaptive
 from lq.topologies.bcc import bcc_heterogeneous_lattice
 import time
 
 # USER INPUT
 
 unit_cell_size = 10
-min_strut_diameter = 0.1
-max_strut_diameter = 2.
-min_node_diameter = 0.11
-max_node_diameter = 2.2
-Nx = 3
-Ny = 3
-Nz = 10
+min_strut_diameter = 0.8
+max_strut_diameter = 5.
+min_node_diameter = 0.88
+max_node_diameter = 5.5
+Nx = 4
+Ny = 4
+Nz = 20
 
 # END USER INPUT
 
