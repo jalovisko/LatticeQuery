@@ -11,10 +11,10 @@ from lq.topologies.fcc import fcc_heterogeneous_lattice
 
 unit_cell_size = 10
 min_strut_diameter = 0.1
-max_strut_diameter = 1.
-min_node_diameter = 0.11
-max_node_diameter = 1.1
-Nx = 8
+max_strut_diameter = 1.6
+min_node_diameter = 0.12
+max_node_diameter = 1.92
+Nx = 1
 Ny = 8
 Nz = 8
 

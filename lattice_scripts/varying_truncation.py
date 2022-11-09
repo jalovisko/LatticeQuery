@@ -3,11 +3,11 @@ from lq.topologies.tcubic import tcubic_heterogeneous_lattice
 # USER INPUT
 
 unit_cell_size = 10
-min_strut_diameter = 0.5
+min_strut_diameter = 4.5
 max_strut_diameter = 4
-min_node_diameter = 0.55
+min_node_diameter = 4.95
 max_node_diameter = 4.4
-Nx = 10
+Nx = 1
 Ny = 10
 Nz = 10
 min_truncation = 0.001
