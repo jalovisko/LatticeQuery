@@ -1,7 +1,7 @@
 import cadquery as cq
 
 from lq.topologies.tpms_transition import transition_unit_cell#, gyroid_half_x, p_half, transition
-from ls.topologies.tpms_transition import transition_layer
+from lq.topologies.tpms_transition import transition_layer
 #cq.Workplane.gyroid_half_x = gyroid_half_x
 #cq.Workplane.p_half = p_half
 #cq.Workplane.transition = transition
@@ -23,5 +23,5 @@ Nz = 1
 #lattice, tr = cq.Workplane().transition_unit_cell(thickness, unit_cell_size)
 
 g, p, tr = transition_layer(
-    min_thickness, max_thickness, unit_cell_size, Ny, Nz, 'Y-')
+    min_thickness, max_thickness, unit_cell_size, Ny, Nz, 'Z+')
 

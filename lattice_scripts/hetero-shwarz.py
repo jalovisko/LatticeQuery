@@ -8,11 +8,11 @@ cq.Workplane.schwartz_p_heterogeneous_lattice = schwartz_p_heterogeneous_lattice
 
 # BEGIN USER INPUT
 
-unit_cell_size = 10.
+unit_cell_size = 3.98
 Nx = 1
 Ny = 1
-Nz = 3
-min_thickness = 0.2
+Nz = 1
+min_thickness = 0.9
 max_thickness = 2.1
 # END USER INPUT
 
