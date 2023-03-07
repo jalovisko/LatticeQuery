@@ -1,4 +1,4 @@
-# LatticeQuery - An F-rep tool for the geometric modeling of lattice structures
+# LatticeQuery - An open-source software for modeling of lattice structures
 
 [![DOI](https://zenodo.org/badge/291864023.svg)](https://zenodo.org/badge/latestdoi/291864023)
 
