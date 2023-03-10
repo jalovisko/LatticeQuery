@@ -18,6 +18,8 @@ import scipy
 
 import cadquery as cq
 
+from lq.commons import cylinder_by_two_points, make_sphere
+
 air_traffic_mess = np.random.random_sample((50, 3))
 vor = scipy.spatial.Voronoi(air_traffic_mess)
 
@@ -40,10 +42,16 @@ for ridge_indices in vor.ridge_vertices:
             voronoi_ridge_coords[...,2][i]
             )
         if not fits(startPoint) or not fits(endPoint):
-            pass
+            continue
         print(startPoint, endPoint)
-        edge = cq.Edge.makeLine(startPoint, endPoint)
-        show_object(edge)
-    #edges.append(edge)
+        #edge = cq.Edge.makeLine(startPoint, endPoint)
+        #show_object(edge)
+        radius = 0.01
+        beam = cylinder_by_two_points(startPoint, endPoint, radius)
+        show_object(beam)
+        #sphere = make_sphere(cq.Vector(startPoint), radius)
+        #show_object(sphere)
+        #sphere = make_sphere(cq.Vector(endPoint), radius)
+        #show_object(sphere)
 
 #result = cq.Workplane().polyline(pts)
