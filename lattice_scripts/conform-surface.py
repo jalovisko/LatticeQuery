@@ -16,17 +16,21 @@ f = 5*np.sin(t)/t
 df = (t * np.cos(t) - np.sin(t))/(t*t)
 slope = - 1/df
 
+# These lists will be filled with coordinates later.
 pts=[]
 g_pts1=[]
 g_pts2=[]
 for idx, x in enumerate(t):
     y = f[idx]
     if x == 0:
+        # adds a coordinate to pts, g_pts1, and g_pts2
         y = 1.0 * 5
         pts += [(x, y, z)]
         g_pts1 += [(x, y + offset, z)]
         g_pts2 += [(x, y - offset, z)]
     else:
+        # calculates the necessary values for xg1, yg1, xg2, and yg2
+        # using some mathematical formulas
         y = f[idx]
         pts += [(x, y, z)]
         k = slope[idx]
