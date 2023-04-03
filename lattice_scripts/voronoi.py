@@ -20,7 +20,12 @@ import cadquery as cq
 
 from lq.commons import cylinder_by_two_points, make_sphere
 
+<<<<<<< HEAD
 air_traffic_mess = np.random.random_sample((5000000, 3))*465
+=======
+air_traffic_mess = np.random.random_sample((100000, 3)) * 9
+print(f'{len(air_traffic_mess)} seeds generated')
+>>>>>>> 74ebf6f0590a6abb5159c91dddb09e0b85c41647
 vor = scipy.spatial.Voronoi(air_traffic_mess)
 
 def fits(pt):
@@ -29,8 +34,15 @@ def fits(pt):
             return False
     return True
 
+<<<<<<< HEAD
+=======
+print(f'{len(vor.ridge_vertices)} ridges detected')
+j = 0
+>>>>>>> 74ebf6f0590a6abb5159c91dddb09e0b85c41647
 for ridge_indices in vor.ridge_vertices:
     voronoi_ridge_coords = vor.vertices[ridge_indices]
+    print(f'Ridge {j} of {len(vor.ridge_vertices)}...')
+    j += 1
     for i in range(1, len(voronoi_ridge_coords[...,0])): 
         startPoint = (
             voronoi_ridge_coords[...,0][0],
