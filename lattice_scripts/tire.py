@@ -1,7 +1,7 @@
 import cadquery as cq
 
 from lq.commons import eachpointAdaptive
-from lqq.topologies.conformal import cylinder
+from lq.topologies.conformal import cylinder
 
 z_uc = 8 # no. of Z unit cell
 
