@@ -4,10 +4,15 @@ channels:
   - conda-forge
 dependencies:
   - pyqt=5
-  - pyqtgraph
+  - pyqtgraph=0.12.3=pyhd8ed1ab_0
   - python=3.8
   - spyder=5
-  - path
-  - logbook
-  - requests
-  - cadquery=master
+  - path=16.2.0=py38h578d9bd_1
+  - logbook=1.5.3=py38h497a2fe_5
+  - requests=2.26.0=pyhd8ed1ab_1
+  - nptyping=1.4.2
+  - cadquery=2.1
+  - pip:
+    - numba==0.57.0
+    - pyparsing==2.2
+    - scipy==1.10.1
