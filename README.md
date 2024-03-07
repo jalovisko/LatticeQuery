@@ -16,7 +16,7 @@ conda activate lq
 ```
 
 ## Usage
-Most of the functionality is located in the `parfunlib` folder (stands for 'parametric function library'). Within the installed virtual environment, run the main Python script as follows:
+Most of the functionality is located in the `lq` folder (stands for 'LatticeQuery'). Within the installed virtual environment, run the main Python script as follows:
 ```bash
 python run.py
 ```
@@ -45,7 +45,7 @@ For example, modeling of a heterogeneous Schwarz P lattice with the thickness li
 ```python
 # Python
 import cadquery as cq
-from parfunlib.topologies.schwartz import schwartz_p_heterogeneous_lattice
+from lq.topologies.schwartz import schwartz_p_heterogeneous_lattice
 cq.Workplane.schwartz_p_heterogeneous_lattice = schwartz_p_heterogeneous_lattice
 
 # BEGIN USER INPUT
