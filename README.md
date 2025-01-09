@@ -9,11 +9,14 @@ For the CadQuery documentation, please address [its repository](https://github.c
 For the description of the methodology, the [corresponding research paper](https://doi.org/10.1093/jcde/qwac076) is suggested.
 
 ## Installation
+
 The installation of this tool requires [Anaconda](https://www.anaconda.com/) installed. Once installed, you can create a virtual conda environment as follows:
 ```bash
 conda env create -f lqgui_env.yml -n lq
 conda activate lq
 ```
+
+You can also simply use the binary versions in the [latest release](https://github.com/jalovisko/LatticeQuery/releases/latest).
 
 ## Usage
 Most of the functionality is located in the `lq` folder (stands for 'LatticeQuery'). Within the installed virtual environment, run the main Python script as follows:
