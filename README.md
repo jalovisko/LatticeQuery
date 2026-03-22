@@ -8,21 +8,84 @@ For the CadQuery documentation, please address [its repository](https://github.c
 
 For the description of the methodology, the [corresponding research paper](https://doi.org/10.1093/jcde/qwac076) is suggested.
 
-## Installation
+## 1. Installation
 
-The installation of this tool requires [Anaconda](https://www.anaconda.com/) installed. Once installed, you can create a virtual conda environment as follows:
+### 1.1. Requirements
+
+- Python 3.10–3.12 (Python 3.13+ is not yet supported by the `cadquery` dependency)
+- pip
+
+### 1.2. Linux (Debian / Ubuntu)
+
+Install system libraries required by Qt and Python:
+
 ```bash
-conda env create -f lqgui_env.yml -n lq
-conda activate lq
+sudo apt update && sudo apt install -y \
+  python3 python3-pip python3-venv \
+  libgl1 libglu1-mesa \
+  libx11-xcb1 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+  libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 \
+  libxkbcommon-x11-0
 ```
 
-You can also simply use the binary versions in the [latest release](https://github.com/jalovisko/LatticeQuery/releases/latest).
+Then install LatticeQuery:
 
-## Usage
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -e .
+python run.py
+```
+
+### 1.3. Linux (Arch Linux)
+
+```bash
+sudo pacman -S --needed python python-pip mesa glu libx11 libxcb \
+  xcb-util-wm xcb-util-image xcb-util-keysyms xcb-util-renderutil libxkbcommon
+```
+
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -e .
+python run.py
+```
+
+### 1.4. macOS
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -e .
+python run.py
+```
+
+### 1.5. Windows
+
+```bat
+python -m venv venv
+venv\Scripts\activate
+pip install -e .
+python run.py
+```
+
+You can also use the binary versions in the [latest release](https://github.com/jalovisko/LatticeQuery/releases/latest).
+
+## 2. Usage
+
 Most of the functionality is located in the `lq` folder (stands for 'LatticeQuery'). Within the installed virtual environment, run the main Python script as follows:
+
 ```bash
 python run.py
 ```
+
+Linux (Wayland): if you are running a Wayland compositor, Qt may need to be forced to use the XCB (X11) backend:
+
+```bash
+QT_QPA_PLATFORM=xcb python run.py
+```
+
+This is set automatically when launching via `run.py`, so you only need the explicit override if you experience display issues.
 
 The topologies that are implemented include:
 * Beam-based
@@ -67,7 +130,7 @@ schwartz = schwartz_p_heterogeneous_lattice(unit_cell_size, min_thickness, max_t
 As you can see, a single function handles requires geometric arguments and handles all the modeling. The result is the following:
 ![Heterogeneous Schwartz P lattice](/screenshots/hetero-schwartz.png)
 
-## Other examples
+## 3. Other examples
 This and many more examples of the implementation are located in the `lattce_scripts` directory.
 An example is a Python script that can be imported from within the editor (the window you see when running `run.py`).
 These examples include the geometric modeling of:
@@ -83,7 +146,7 @@ These examples include the geometric modeling of:
 * A heterogeneous Schwarz D lattice with the thickness changing according to the periodic sine distribution (`schwartz-d.py`)
 
 
-## Known issues
-Sometimes the modeling would fail with an error like `Brep: command not done`. This is often solved by passing a float argument to the function rather than an integer one. You can also try to increase the unit cell size, let's say, 10 times, and then scale it down 10 times.
+## 4. Known issues
+Sometimes the modeling would fail with an error like `Brep: command not done`. This is often solved by passing a float argument to the function rather than an integer one. You can also try to increase the unit cell size, let's say, 10 times, and then scale it down 10 times, or increasing the mesh density.
 
 The connection between some of the TPMS based topologies seems abrupt and has gaps in some cases. This effect should be investigated further.

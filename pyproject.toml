@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "LatticeQuery"
+version = "0.1.1"
+dependencies = [
+  "cadquery",
+  "PyQt5",
+  "pyqtgraph",
+  "qtawesome==1.4.0",
+  "path",
+  "logbook",
+  "requests",
+  "qtconsole",
+  "numpy",
+  "packaging",
+]
+requires-python = ">=3.10"
+description = "CadQuery-based editor for heterogeneous lattice structure design"
+readme = "README.md"
+license = {file = "LICENSE"}
+
+[project.scripts]
+lq-editor = "cq_editor.__main__:main"
+LatticeQuery = "cq_editor.__main__:main"
+
+[project.optional-dependencies]
+test = [
+  "pytest",
+  "pytest-qt",
+  "pytest-mock",
+  "pyvirtualdisplay",
+]

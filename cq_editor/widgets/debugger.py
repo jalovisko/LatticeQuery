@@ -1,6 +1,6 @@
-import sys, imp
+import sys
 from enum import Enum, auto
-from imp import reload
+from importlib import reload
 from types import SimpleNamespace
 
 from PyQt5.QtWidgets import (QWidget, QTreeWidget, QTreeWidgetItem, QAction,
@@ -10,7 +10,7 @@ from PyQt5 import QtCore
 
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from logbook import info
-from spyder.utils.icon_manager import icon
+from ..icons import icon
 from path import Path
 from contextlib import ExitStack
 
@@ -167,7 +167,7 @@ class Debugger(QObject,ComponentMixin):
     def compile_code(self,cq_script):
 
         try:
-            module = imp.new_module('temp')
+            import types; module = types.ModuleType('temp')
             cq_code = compile(cq_script,'<string>','exec')
             return cq_code,module
         except Exception:
@@ -179,7 +179,7 @@ class Debugger(QObject,ComponentMixin):
 
         with ExitStack() as stack:
             fname = self.parent().components['editor'].filename
-            p = Path(fname if fname else '').abspath().dirname()
+            p = Path(fname if fname else '').absolute().dirname()
 
             if self.preferences['Add script dir to path'] and p.exists():
                 sys.path.insert(0,p)

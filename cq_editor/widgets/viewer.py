@@ -81,7 +81,7 @@ class OCCViewer(QWidget,ComponentMixin):
     def create_actions(self,parent):
 
         self._actions =  \
-                {'View' : [QAction(qta.icon('fa.arrows-alt'),
+                {'View' : [QAction(qta.icon('fa5s.arrows-alt'),
                                    'Fit',
                                    parent,
                                    triggered=self.fit),
@@ -113,11 +113,11 @@ class OCCViewer(QWidget,ComponentMixin):
                                   'Right',
                                   parent,
                                   triggered=self.right_view),
-                          QAction(qta.icon('fa.square-o'),
+                          QAction(qta.icon('fa5.square'),
                                   'Wireframe',
                                   parent,
                                   triggered=self.wireframe_view),
-                                  QAction(qta.icon('fa.square'),
+                                  QAction(qta.icon('fa5s.square'),
                                           'Shaded',
                                           parent,
                                           triggered=self.shaded_view)],

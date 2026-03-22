@@ -59,13 +59,11 @@ def gyroid_000(self, thickness: float, unit_cell_size: float
             .workplane(offset = - offset_list[i + 1])
             .spline(edge_points[i + 1])
         )
-    surface_points = [[0, 0, 0]]
-    plate_4 = cq.Workplane("XY")
-    # `interpPlate` is a function that interpolates a surface from a wire.
-    plate_4 = plate_4.interpPlate(edge_wire, surface_points, thickness * 0.5)
-    plate_4 = plate_4.union(
-        cq.Workplane("XY").interpPlate(edge_wire, surface_points, - 0.5 * thickness)
-    )
+    surface_points = [(0, 0, 0)]
+    face = cq.Workplane("XY").interpPlate(edge_wire, surface_points, 0).val()
+    plate_4 = (cq.Workplane("XY")
+               .add(face.thicken(0.5 * thickness))
+               .union(cq.Workplane("XY").add(face.thicken(-0.5 * thickness))))
     return self.union(self.eachpoint(lambda loc: plate_4.val().located(loc), True))
 cq.Workplane.gyroid_000 = gyroid_000
 

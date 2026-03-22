@@ -2,7 +2,7 @@ import cadquery as cq
 from cadquery.occ_impl.assembly import toCAF
 
 from typing import List, Union, Tuple
-from imp import reload
+from importlib import reload
 from types import SimpleNamespace
 
 from OCP.XCAFPrs import XCAFPrs_AISObject
@@ -104,7 +104,7 @@ def get_occ_color(ais : AIS_ColoredShape) -> QColor:
     return QColor.fromRgbF(color.Red(), color.Green(), color.Blue())
 
 def reload_cq():
-    
+
     # NB: order of reloads is important
     reload(cq.occ_impl.geom)
     reload(cq.occ_impl.shapes)
@@ -114,11 +114,9 @@ def reload_cq():
     reload(cq.selectors)
     reload(cq.occ_impl.exporters.svg)
     reload(cq.cq)
-    reload(cq.occ_impl.exporters.utils)
     reload(cq.occ_impl.exporters.dxf)
     reload(cq.occ_impl.exporters.amf)
     reload(cq.occ_impl.exporters.json)
-    #reload(cq.occ_impl.exporters.assembly)
     reload(cq.occ_impl.exporters)
     reload(cq.assembly)
     reload(cq)

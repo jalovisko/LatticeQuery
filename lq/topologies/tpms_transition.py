@@ -169,12 +169,11 @@ def transition(self, thickness: float, unit_cell_size: float
                 )
     )
     edge_wire = edge_wire.add(edge_wire.close())
-    surface_points = [[0, 0, 0]]
-    plate_0 = cq.Workplane("XY")
-    plate_0 = plate_0.interpPlate(edge_wire, surface_points, 0.5 * thickness)
-    plate_0 = plate_0.union(
-        cq.Workplane("XY").interpPlate(edge_wire, surface_points, - 0.5 * thickness)
-    )
+    surface_points = [(0, 0, 0)]
+    face_0 = cq.Workplane("XY").interpPlate(edge_wire, surface_points, 0).val()
+    plate_0 = (cq.Workplane("XY")
+               .add(face_0.thicken(0.5 * thickness))
+               .union(cq.Workplane("XY").add(face_0.thicken(-0.5 * thickness))))
     # transition 2
     gyroid_pnts = [
         (- half_uc, - half_uc),
@@ -212,14 +211,11 @@ def transition(self, thickness: float, unit_cell_size: float
                 )
     )
     edge_wire = edge_wire.add(edge_wire.close())
-    surface_points = [[0, 0, 0]]
-    plate_1 = cq.Workplane("XY").transformed(offset = (0, unit_cell_size, 0))
-    plate_1 = plate_1.interpPlate(edge_wire, surface_points, 0.5 * thickness)
-    plate_1 = plate_1.union(
-        cq.Workplane("XY")
-        .transformed(offset = (0, unit_cell_size, 0))
-        .interpPlate(edge_wire, surface_points, - 0.5 * thickness)
-    )
+    surface_points = [(0, 0, 0)]
+    face_1 = cq.Workplane("XY").transformed(offset = (0, unit_cell_size, 0)).interpPlate(edge_wire, surface_points, 0).val()
+    plate_1 = (cq.Workplane("XY")
+               .add(face_1.thicken(0.5 * thickness))
+               .union(cq.Workplane("XY").add(face_1.thicken(-0.5 * thickness))))
     result = plate_0.union(plate_1)
     # transition 3
     gyroid_pnts = [
@@ -258,14 +254,11 @@ def transition(self, thickness: float, unit_cell_size: float
                 )
     )
     edge_wire = edge_wire.add(edge_wire.close())
-    surface_points = [[0, 0, 0]]
-    plate_2 = cq.Workplane("XY").transformed(offset = (0, 0, unit_cell_size))
-    plate_2 = plate_2.interpPlate(edge_wire, surface_points, 0.5 * thickness)
-    plate_2 = plate_2.union(
-        cq.Workplane("XY")
-        .transformed(offset = (0, 0, unit_cell_size))
-        .interpPlate(edge_wire, surface_points, - 0.5 * thickness)
-    )
+    surface_points = [(0, 0, 0)]
+    face_2 = cq.Workplane("XY").transformed(offset = (0, 0, unit_cell_size)).interpPlate(edge_wire, surface_points, 0).val()
+    plate_2 = (cq.Workplane("XY")
+               .add(face_2.thicken(0.5 * thickness))
+               .union(cq.Workplane("XY").add(face_2.thicken(-0.5 * thickness))))
     result = result.union(plate_2)
     # transition 4
     gyroid_pnts = [
@@ -304,14 +297,11 @@ def transition(self, thickness: float, unit_cell_size: float
                 )
     )
     edge_wire = edge_wire.add(edge_wire.close())
-    surface_points = [[0, 0, 0]]
-    plate_3 = cq.Workplane("XY").transformed(offset = (0, unit_cell_size, unit_cell_size))
-    plate_3 = plate_3.interpPlate(edge_wire, surface_points, 0.5 * thickness)
-    plate_3 = plate_3.union(
-        cq.Workplane("XY")
-        .transformed(offset = (0, unit_cell_size, unit_cell_size))
-        .interpPlate(edge_wire, surface_points, - 0.5 * thickness)
-    )
+    surface_points = [(0, 0, 0)]
+    face_3 = cq.Workplane("XY").transformed(offset = (0, unit_cell_size, unit_cell_size)).interpPlate(edge_wire, surface_points, 0).val()
+    plate_3 = (cq.Workplane("XY")
+               .add(face_3.thicken(0.5 * thickness))
+               .union(cq.Workplane("XY").add(face_3.thicken(-0.5 * thickness))))
     result = result.union(plate_3)
     return self.union(self.eachpoint(lambda loc: result.val().located(loc), True))
 cq.Workplane.transition = transition

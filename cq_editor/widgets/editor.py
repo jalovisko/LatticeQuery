@@ -1,4 +1,5 @@
-from spyder.plugins.editor.widgets.codeeditor import CodeEditor
+from .code_editor import CodeEditor
+from .pyhighlight import PythonHighlighter
 from PyQt5.QtCore import pyqtSignal, QFileSystemWatcher, QTimer
 from PyQt5.QtWidgets import QAction, QFileDialog
 from PyQt5.QtGui import QFontDatabase
@@ -12,6 +13,19 @@ from ..mixins import ComponentMixin
 from ..utils import get_save_filename, get_open_filename, confirm
 
 from ..icons import icon
+
+
+class EditorDebugger:
+    def __init__(self):
+        self.breakpoints = []
+
+    def get_breakpoints(self):
+        return self.breakpoints
+
+    def set_breakpoints(self, breakpoints):
+        self.breakpoints = breakpoints
+        return True
+
 
 class Editor(CodeEditor,ComponentMixin):
 
@@ -28,18 +42,19 @@ class Editor(CodeEditor,ComponentMixin):
         {'name': 'Autoreload delay', 'type': 'int', 'value': 50},
         {'name': 'Line wrap', 'type': 'bool', 'value': False},
         {'name': 'Color scheme', 'type': 'list',
-         'values': ['Spyder','Monokai','Zenburn'], 'value': 'Spyder'}])
+         'values': ['Light','Dark'], 'value': 'Light'}])
 
     EXTENSIONS = 'py'
 
     def __init__(self,parent=None):
 
         self._watched_file = None
+        self.debugger = EditorDebugger()
 
         super(Editor,self).__init__(parent)
         ComponentMixin.__init__(self)
 
-        self.setup_editor(linenumbers=True,
+        self.setup_editor(line_numbers=True,
                           markers=True,
                           edge_line=False,
                           tab_mode=False,
@@ -47,6 +62,8 @@ class Editor(CodeEditor,ComponentMixin):
                           font=QFontDatabase.systemFont(QFontDatabase.FixedFont),
                           language='Python',
                           filename='')
+
+        self.highlighter = PythonHighlighter(self.document())
 
         self._actions =  \
                 {'File' : [QAction(icon('new'),
@@ -96,19 +113,13 @@ class Editor(CodeEditor,ComponentMixin):
         self.updatePreferences()
 
     def _fixContextMenu(self):
-
-        menu = self.menu
-
-        menu.removeAction(self.run_cell_action)
-        menu.removeAction(self.run_cell_and_advance_action)
-        menu.removeAction(self.run_selection_action)
-        menu.removeAction(self.re_run_last_cell_action)
+        pass
 
     def updatePreferences(self,*args):
 
         self.set_color_scheme(self.preferences['Color scheme'])
 
-        font = self.font()
+        font = self.font
         font.setPointSize(self.preferences['Font size'])
         self.set_font(font)
 
@@ -140,7 +151,7 @@ class Editor(CodeEditor,ComponentMixin):
         
         if not self.confirm_discard(): return
 
-        curr_dir = Path(self.filename).abspath().dirname()
+        curr_dir = Path(self.filename).absolute().dirname()
         fname = get_open_filename(self.EXTENSIONS, curr_dir)
         if fname != '':
             self.load_from_file(fname)

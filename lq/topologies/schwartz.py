@@ -48,15 +48,11 @@ def schwartz_p_000(self, thickness, unit_cell_size):
                         tuple(edge_points[i + 1][2]))
         )
 
-    surface_points = [[0, 0, 0]]
-    plate_4 = cq.Workplane("XY")
-    print(edge_wire)
-    print(surface_points)
-    print(thickness)
-    plate_4 = plate_4.interpPlate(edge_wire, surface_points, 0.5 * thickness)
-    plate_4 = plate_4.union(
-        cq.Workplane("XY").interpPlate(edge_wire, surface_points, - 0.5 * thickness)
-    )
+    surface_points = [(0, 0, 0)]
+    face = cq.Workplane("XY").interpPlate(edge_wire, surface_points, 0).val()
+    plate_4 = (cq.Workplane("XY")
+               .add(face.thicken(0.5 * thickness))
+               .union(cq.Workplane("XY").add(face.thicken(-0.5 * thickness))))
     return self.union(self.eachpoint(lambda loc: plate_4.val().located(loc), True))
 
 cq.Workplane.schwartz_p_000 = schwartz_p_000
@@ -74,12 +70,11 @@ def schwartz_d_000(self, thickness, unit_cell_size):
         (0, half_unit_cell, 0)
     ]
     edge_wire = cq.Workplane().polyline(pts)
-    surface_points = [[half_unit_cell * 0.5, half_unit_cell * 0.5, half_unit_cell * 0.5]]
-    plate = cq.Workplane("XY")
-    plate = plate.interpPlate(edge_wire, surface_points, 0.5 * thickness)
-    plate = plate.union(
-        cq.Workplane("XY").interpPlate(edge_wire, surface_points, - 0.5 * thickness)
-    )
+    surface_points = [(half_unit_cell * 0.5, half_unit_cell * 0.5, half_unit_cell * 0.5)]
+    face = cq.Workplane("XY").interpPlate(edge_wire, surface_points, 0).val()
+    plate = (cq.Workplane("XY")
+             .add(face.thicken(0.5 * thickness))
+             .union(cq.Workplane("XY").add(face.thicken(-0.5 * thickness))))
     return self.union(self.eachpoint(lambda loc: plate.val().located(loc), True))
 
 cq.Workplane.schwartz_d_000 = schwartz_d_000
