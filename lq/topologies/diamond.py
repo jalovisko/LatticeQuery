@@ -13,7 +13,7 @@
 ##############################################################################
 
 from typing import Tuple
-from numpy.lib.function_base import append
+from numpy import append
 from ..commons import eachpointAdaptive
 
 from math import hypot, acos, degrees
