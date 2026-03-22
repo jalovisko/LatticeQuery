@@ -3,7 +3,7 @@ import faulthandler
 
 faulthandler.enable()
 
-if 'CASROOT' in os.environ:
+if sys.platform != 'win32' and 'CASROOT' in os.environ:
     del os.environ['CASROOT']
 
 if 'QT_QPA_PLATFORM' not in os.environ:
