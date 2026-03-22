@@ -220,6 +220,10 @@ class Debugger(QObject,ComponentMixin):
 
         if self.preferences['Reload CQ']:
             reload_cq()
+            # Force re-import of lq plugin modules so cq.Workplane registrations are renewed
+            lq_modules = [k for k in sys.modules if k == 'lq' or k.startswith('lq.')]
+            for mod in lq_modules:
+                del sys.modules[mod]
 
         cq_script = self.get_current_script()
         cq_code,module = self.compile_code(cq_script)
